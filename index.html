@@ -14,180 +14,138 @@
 html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-system,'Hiragino Sans','Noto Sans JP',sans-serif;}
 #app{max-width:430px;height:100vh;margin:0 auto;display:flex;flex-direction:column;background:#f2f4f7;overflow:hidden;position:relative;}
 
-/* ══════════════════════════════
-   SETUP WIZARD
-══════════════════════════════ */
+/* SETUP */
 #setup{position:fixed;inset:0;z-index:500;background:#1a3a5c;display:flex;flex-direction:column;overflow:hidden;}
 #setup.hidden{display:none;}
+.setup-header{padding:max(env(safe-area-inset-top),16px) 20px 12px;flex-shrink:0;}
+.setup-progress{display:flex;gap:6px;margin-bottom:12px;}
+.sdot{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);transition:background 0.3s;}
+.sdot.done{background:#7ec8f0;}.sdot.active{background:#fff;}
+.setup-step-lbl{color:rgba(255,255,255,0.45);font-size:11px;letter-spacing:0.5px;}
+.setup-title{color:#fff;font-size:19px;font-weight:700;margin-top:3px;}
+.setup-sub{color:rgba(255,255,255,0.5);font-size:12px;margin-top:3px;line-height:1.5;}
+.setup-body{flex:1;overflow-y:auto;padding:4px 16px 8px;-webkit-overflow-scrolling:touch;}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.scard{padding:13px 8px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-family:inherit;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.scard:active{transform:scale(0.96);}
+.scard.selected{border-color:#7ec8f0;background:rgba(126,200,240,0.22);}
+.scard .si{font-size:26px;}.scard .sn{font-size:12px;font-weight:700;line-height:1.3;}
+.scard .ss{font-size:10px;opacity:0.55;line-height:1.2;}
+.setup-footer{padding:10px 16px;padding-bottom:max(env(safe-area-inset-bottom),10px);flex-shrink:0;}
+.snext{width:100%;padding:13px;border-radius:13px;background:#fff;color:#1a3a5c;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all 0.18s;}
+.snext:disabled{opacity:0.3;cursor:default;}
+.sback{width:100%;padding:9px;border-radius:11px;background:transparent;color:rgba(255,255,255,0.45);font-size:13px;border:none;cursor:pointer;font-family:inherit;margin-top:7px;}
 
-.setup-header{padding:max(env(safe-area-inset-top),16px) 20px 16px;flex-shrink:0;}
-.setup-progress{display:flex;gap:6px;margin-bottom:16px;}
-.setup-step-dot{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);transition:background 0.3s;}
-.setup-step-dot.done{background:#7ec8f0;}
-.setup-step-dot.active{background:#fff;}
-.setup-step-label{color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:0.5px;}
-.setup-title{color:#fff;font-size:20px;font-weight:700;margin-top:4px;}
-.setup-sub{color:rgba(255,255,255,0.55);font-size:13px;margin-top:4px;line-height:1.5;}
-
-.setup-body{flex:1;overflow-y:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch;}
-.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.setup-card{padding:14px 10px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-family:inherit;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:5px;}
-.setup-card:active{transform:scale(0.96);}
-.setup-card.selected{border-color:#7ec8f0;background:rgba(126,200,240,0.2);}
-.setup-card .sc-icon{font-size:28px;}
-.setup-card .sc-name{font-size:13px;font-weight:700;line-height:1.3;}
-.setup-card .sc-sub{font-size:10px;opacity:0.6;line-height:1.3;}
-.setup-card.selected .sc-sub{opacity:0.8;}
-
-.setup-footer{padding:12px 16px;padding-bottom:max(env(safe-area-inset-bottom),12px);flex-shrink:0;}
-.setup-next{width:100%;padding:14px;border-radius:14px;background:#fff;color:#1a3a5c;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.setup-next:disabled{opacity:0.3;cursor:default;}
-.setup-next:not(:disabled):active{transform:scale(0.98);}
-.setup-back{width:100%;padding:10px;border-radius:12px;background:transparent;color:rgba(255,255,255,0.5);font-size:14px;border:none;cursor:pointer;font-family:inherit;margin-top:8px;}
-
-/* ══════════════════════════════
-   HEADER
-══════════════════════════════ */
-.header{background:#1a3a5c;padding:10px 14px;padding-top:max(env(safe-area-inset-top),10px);flex-shrink:0;}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+/* HEADER */
+.header{background:#1a3a5c;padding:9px 14px;padding-top:max(env(safe-area-inset-top),9px);flex-shrink:0;}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
 .app-name{color:#fff;font-size:17px;font-weight:700;}
 .header-meta{display:flex;align-items:center;gap:6px;}
-.job-chip{background:rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.8);}
+.job-chip{background:rgba(255,255,255,0.14);border-radius:20px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.85);}
 .settings-btn{padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;font-family:inherit;}
-.lang-switcher{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
-.lang-switcher::-webkit-scrollbar{display:none;}
-.lsw-btn{flex:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.18s;}
-.lsw-btn.active{background:#fff;color:#1a3a5c;border-color:#fff;}
-.lsw-btn .lf{font-size:15px;}
+.lang-sw{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.lang-sw::-webkit-scrollbar{display:none;}
+.lbtn{flex:none;display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.18s;}
+.lbtn.active{background:#fff;color:#1a3a5c;border-color:#fff;}
+.lbtn .lf{font-size:15px;}
 
-/* ══════════════════════════════
-   CATEGORIES
-══════════════════════════════ */
+/* CATS */
 .cats{display:flex;background:#fff;border-bottom:1px solid #e0e6ef;flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
 .cats::-webkit-scrollbar{display:none;}
-.cat-btn{flex:none;padding:10px 14px;font-size:12px;font-weight:600;border:none;background:none;color:#94a3b8;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.18s;}
-.cat-btn.active{color:#1a3a5c;border-bottom-color:#1a3a5c;}
+.cbt{flex:none;padding:10px 14px;font-size:12px;font-weight:600;border:none;background:none;color:#94a3b8;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.18s;}
+.cbt.active{color:#1a3a5c;border-bottom-color:#1a3a5c;}
 
-/* ══════════════════════════════
-   PHRASE LIST
-══════════════════════════════ */
+/* PHRASE LIST */
 .phrase-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 80px;}
-.job-banner{background:linear-gradient(135deg,#1a3a5c,#2d6a9f);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
-.job-banner-icon{font-size:22px;}
-.job-banner-text{color:#fff;font-size:12px;font-weight:600;opacity:0.9;}
-.job-banner-sub{color:rgba(255,255,255,0.6);font-size:10px;margin-top:1px;}
-.pcard{background:#fff;border:1.5px solid #e0e6ef;border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.18s;position:relative;}
+.pcard{background:#fff;border:1.5px solid #e0e6ef;border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;transition:all 0.18s;position:relative;}
 .pcard:active{transform:scale(0.98);}
 .pcard.selected{background:#eaf4ff;border-color:#1a3a5c;box-shadow:0 2px 12px rgba(26,58,92,0.12);}
-.pcard-job-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;background:#fff3cd;color:#856404;font-weight:600;margin-bottom:6px;}
-.pcard-jp{font-size:19px;font-weight:700;color:#0d1f35;line-height:1.35;}
-.pcard-read{font-size:11px;color:#b0bec5;margin:2px 0 8px;}
-.pcard-divider{height:1px;background:#f0f4f8;margin-bottom:8px;}
-.pcard-tl{font-size:17px;font-weight:600;color:#1a3a5c;line-height:1.35;}
-.pcard-btns{display:flex;gap:7px;margin-top:11px;}
-.pbtn{flex:1;padding:8px 0;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;transition:transform 0.12s;}
+.pcard-jp{font-size:18px;font-weight:700;color:#0d1f35;line-height:1.35;}
+.pcard-read{font-size:11px;color:#b0bec5;margin:2px 0 7px;}
+.pcard-divider{height:1px;background:#f0f4f8;margin-bottom:7px;}
+.pcard-tl{font-size:16px;font-weight:600;color:#1a3a5c;line-height:1.35;}
+.pcard.selected .pcard-tl{color:#0a2d52;}
+.pcard-btns{display:flex;gap:7px;margin-top:10px;}
+.pbtn{flex:1;padding:8px 0;border-radius:10px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;transition:transform 0.12s;}
 .pbtn:active{transform:scale(0.95);}
 .pbtn-jp{background:#1a3a5c;color:#fff;}
 .pbtn-tl{background:#ddeeff;color:#1a3a5c;}
 .pcard.selected .pbtn-tl{background:#b8d8f8;}
 .empty-state{text-align:center;padding:40px 20px;color:#94a3b8;}
-.empty-icon{font-size:40px;margin-bottom:10px;}
-.empty-text{font-size:14px;}
+.empty-icon{font-size:36px;margin-bottom:8px;}
 
-/* ══════════════════════════════
-   EMERGENCY
-══════════════════════════════ */
+/* EMERGENCY */
 .emerg-list{flex:1;overflow-y:auto;padding:10px 12px 80px;}
 .emerg-top{background:#fff3f3;border:1px solid #ffbaba;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#c0392b;font-weight:600;}
-.ecard{background:#fff;border:1px solid #f5a0a0;border-left:4px solid #e74c3c;border-radius:14px;padding:13px 14px;margin-bottom:9px;cursor:pointer;transition:all 0.15s;}
+.ecard{background:#fff;border:1px solid #f5a0a0;border-left:4px solid #e74c3c;border-radius:14px;padding:13px 14px;margin-bottom:9px;}
 .ecard:active{transform:scale(0.98);}
 .ebadge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;background:#fde8e8;color:#c0392b;font-weight:700;margin-bottom:5px;}
-.ecard-jp{font-size:18px;font-weight:700;color:#0d1f35;}
-.ecard-tl{font-size:15px;font-weight:600;color:#1a3a5c;margin-top:6px;}
+.ecard-jp{font-size:17px;font-weight:700;color:#0d1f35;}
+.ecard-tl{font-size:14px;font-weight:600;color:#1a3a5c;margin-top:5px;}
 .ecard-btns{display:flex;gap:8px;margin-top:10px;}
 .ebtn{flex:1;padding:9px 0;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;}
 .ebtn-jp{background:#1a3a5c;color:#fff;}
 .ebtn-tl{background:#ddeeff;color:#1a3a5c;}
 
-/* ══════════════════════════════
-   ADD PHRASE
-══════════════════════════════ */
+/* ADD */
 .add-screen{flex:1;overflow-y:auto;padding:14px 14px 80px;}
-.add-section{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #e0e6ef;}
-.add-label{font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
-.add-input{width:100%;padding:11px 12px;border:1.5px solid #e0e6ef;border-radius:10px;font-size:15px;font-family:inherit;color:#0d1f35;background:#f8fafc;outline:none;transition:border-color 0.18s;}
-.add-input:focus{border-color:#1a3a5c;}
-.add-input::placeholder{color:#b0bec5;}
+.add-sec{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #e0e6ef;}
+.add-lbl{font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+.add-inp{width:100%;padding:11px 12px;border:1.5px solid #e0e6ef;border-radius:10px;font-size:15px;font-family:inherit;color:#0d1f35;background:#f8fafc;outline:none;transition:border-color 0.18s;}
+.add-inp:focus{border-color:#1a3a5c;}
+.add-inp::placeholder{color:#b0bec5;}
 .add-cat-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
-.add-cat-opt{padding:6px 14px;border-radius:20px;border:1.5px solid #e0e6ef;background:#fff;color:#1a3a5c;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
-.add-cat-opt.selected{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
-.add-save{width:100%;padding:14px;border-radius:12px;background:#1a3a5c;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:transform 0.15s;}
+.acat{padding:6px 13px;border-radius:20px;border:1.5px solid #e0e6ef;background:#fff;color:#1a3a5c;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.acat.selected{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
+.add-save{width:100%;padding:14px;border-radius:12px;background:#1a3a5c;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;}
 .add-save:active{transform:scale(0.98);}
-.translate-btn{width:100%;padding:11px;border-radius:10px;border:1.5px solid #1a3a5c;background:#fff;color:#1a3a5c;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s;}
-.translate-btn:disabled{opacity:0.35;cursor:default;}
-.translate-status{font-size:12px;margin-top:7px;padding:8px 12px;border-radius:8px;display:none;line-height:1.4;}
-.translate-status.loading{display:block;background:#f0f4ff;color:#1a3a5c;}
-.translate-status.success{display:block;background:#e8f8ee;color:#0a6644;}
-.translate-status.error{display:block;background:#fff0f0;color:#c0392b;}
-.lang-translate-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.tr-btn{width:100%;padding:11px;border-radius:10px;border:1.5px solid #1a3a5c;background:#fff;color:#1a3a5c;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tr-btn:disabled{opacity:0.35;cursor:default;}
+.tr-st{font-size:12px;margin-top:7px;padding:8px 12px;border-radius:8px;display:none;line-height:1.4;}
+.tr-st.loading{display:block;background:#f0f4ff;color:#1a3a5c;}
+.tr-st.success{display:block;background:#e8f8ee;color:#0a6644;}
+.tr-st.error{display:block;background:#fff0f0;color:#c0392b;}
+.ltag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
 .ltag{padding:5px 12px;border-radius:20px;border:1.5px solid #e0e6ef;background:#fff;color:#1a3a5c;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
 .ltag.active{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
-.custom-list{margin-top:0;}
 .custom-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e0e6ef;border-radius:10px;padding:11px 13px;margin-bottom:7px;}
-.custom-item-text{font-size:14px;color:#0d1f35;font-weight:600;}
-.custom-item-tl{font-size:12px;color:#94a3b8;margin-top:2px;}
+.ci-text{font-size:14px;color:#0d1f35;font-weight:600;}
+.ci-tl{font-size:12px;color:#94a3b8;margin-top:2px;}
 .del-btn{padding:5px 10px;border-radius:8px;border:1px solid #fde8e8;background:#fff5f5;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;}
 
-/* ══════════════════════════════
-   BOTTOM NAV
-══════════════════════════════ */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #e0e6ef;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
-.bnav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#94a3b8;border:none;background:none;cursor:pointer;font-family:inherit;transition:color 0.18s;}
-.bnav-btn .bni{font-size:20px;}
-.bnav-btn.active{color:#1a3a5c;}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #e0e6ef;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.bb{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#94a3b8;border:none;background:none;cursor:pointer;font-family:inherit;}
+.bb .bi{font-size:20px;}
+.bb.active{color:#1a3a5c;}
 
 /* RESPONSIVE */
-@media (max-height:700px){
-  .setup-card{padding:10px 8px;}
-  .setup-card .sc-icon{font-size:24px;}
-  .setup-card .sc-name{font-size:12px;}
-  .setup-title{font-size:18px;}
-  .setup-sub{font-size:12px;}
-}
-@media (max-width:375px){
-  .setup-grid{gap:7px;}
-  .setup-card .sc-name{font-size:11px;}
-}
+@media(max-height:700px){.scard{padding:9px 6px;}.scard .si{font-size:22px;}.scard .sn{font-size:11px;}.setup-title{font-size:17px;}.setup-sub{font-size:11px;}}
+@media(max-width:375px){.setup-grid{gap:7px;}.scard .sn{font-size:11px;}}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ══ SETUP WIZARD ══ -->
+<!-- SETUP WIZARD -->
 <div id="setup">
   <div class="setup-header">
     <div class="setup-progress">
-      <div class="setup-step-dot active" id="dot-1"></div>
-      <div class="setup-step-dot" id="dot-2"></div>
+      <div class="sdot active" id="dot1"></div>
+      <div class="sdot" id="dot2"></div>
     </div>
-    <div class="setup-step-label" id="setup-step-label">STEP 1 / 2</div>
-    <div class="setup-title" id="setup-title">職種を選んでください</div>
-    <div class="setup-sub" id="setup-sub">Job Category — あなたの現場はどれですか？</div>
+    <div class="setup-step-lbl" id="slbl">STEP 1 / 2</div>
+    <div class="setup-title" id="stitle">職種を選んでください</div>
+    <div class="setup-sub" id="ssub">Job Category — あなたの現場はどれですか？</div>
   </div>
-
-  <div class="setup-body" id="setup-body"></div>
-
+  <div class="setup-body" id="sbody"></div>
   <div class="setup-footer">
-    <button class="setup-next" id="setup-next" onclick="setupNext()" disabled>
-      次へ →
-    </button>
-    <button class="setup-back" id="setup-back" onclick="setupBack()" style="display:none;">
-      ← 戻る
-    </button>
+    <button class="snext" id="snext" onclick="setupNext()" disabled>次へ →</button>
+    <button class="sback" id="sback" onclick="setupBack()" style="display:none">← 戻る</button>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
+<!-- MAIN APP -->
 <div class="header">
   <div class="header-top">
     <div class="app-name">現場会話</div>
@@ -196,544 +154,465 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
       <button class="settings-btn" onclick="showSetup()">設定 ⚙</button>
     </div>
   </div>
-  <div class="lang-switcher" id="lang-switcher"></div>
+  <div class="lang-sw" id="lang-sw"></div>
 </div>
 
 <div class="cats" id="cats"></div>
 
-<div id="screen-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+<div id="sc-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
   <div class="phrase-list" id="phrase-list"></div>
 </div>
-
-<div id="screen-emerg" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+<div id="sc-emerg" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
   <div class="emerg-list">
     <div class="emerg-top">🚨 タップで音声再生 — オフライン対応</div>
     <div id="emerg-list"></div>
   </div>
 </div>
-
-<div id="screen-add" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+<div id="sc-add" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
   <div class="add-screen">
-    <div class="add-section">
-      <div class="add-label">① 日本語フレーズを入力</div>
-      <input class="add-input" id="add-jp" type="text" placeholder="例：休憩してください" oninput="onJpInput()">
-      <div class="add-label" style="margin-top:12px;">② 翻訳する言語を選択</div>
-      <div class="lang-translate-row" id="lang-translate-row"></div>
-      <button class="translate-btn" id="translate-btn" onclick="autoTranslate()" disabled>🌐 自動翻訳する</button>
-      <div class="translate-status" id="translate-status"></div>
-      <div class="add-label" style="margin-top:12px;">③ 翻訳結果（修正可）</div>
-      <input class="add-input" id="add-tl" type="text" placeholder="翻訳後に自動入力されます">
-      <div class="add-label" style="margin-top:12px;">④ カテゴリー</div>
+    <div class="add-sec">
+      <div class="add-lbl">① 日本語フレーズを入力</div>
+      <input class="add-inp" id="add-jp" type="text" placeholder="例：休憩してください" oninput="onJpInput()">
+      <div class="add-lbl" style="margin-top:12px;">② 翻訳する言語を選択</div>
+      <div class="ltag-row" id="ltag-row"></div>
+      <button class="tr-btn" id="tr-btn" onclick="autoTranslate()" disabled>🌐 自動翻訳する</button>
+      <div class="tr-st" id="tr-st"></div>
+      <div class="add-lbl" style="margin-top:12px;">③ 翻訳結果（修正可）</div>
+      <input class="add-inp" id="add-tl" type="text" placeholder="翻訳後に自動入力されます">
+      <div class="add-lbl" style="margin-top:12px;">④ カテゴリー</div>
       <div class="add-cat-row" id="add-cat-row"></div>
     </div>
     <button class="add-save" onclick="savePhrase()">＋ 追加する</button>
-    <div id="custom-list" class="custom-list" style="margin-top:12px;"></div>
+    <div id="custom-list" style="margin-top:12px;"></div>
   </div>
 </div>
 
-<div class="bottom-nav">
-  <button class="bnav-btn active" id="bn-main" onclick="switchScreen('main')"><span class="bni">💬</span>会話</button>
-  <button class="bnav-btn" id="bn-emerg" onclick="switchScreen('emerg')"><span class="bni">🚨</span>緊急</button>
-  <button class="bnav-btn" id="bn-add" onclick="switchScreen('add')"><span class="bni">＋</span>追加</button>
+<div class="bnav">
+  <button class="bb active" id="bn-main" onclick="switchScreen('main')"><span class="bi">💬</span>会話</button>
+  <button class="bb" id="bn-emerg" onclick="switchScreen('emerg')"><span class="bi">🚨</span>緊急</button>
+  <button class="bb" id="bn-add" onclick="switchScreen('add')"><span class="bi">＋</span>追加</button>
+</div>
 </div>
 
-</div><!-- #app -->
-
 <script>
-/* ══════════════════════════════
-   MASTER DATA
-══════════════════════════════ */
-
-// 職種マスター（今後追加しやすい構造）
+/* ══ MASTER DATA ══ */
 const JOBS = [
-  { id:'manufacturing', icon:'🏭', name:'製造業', sub:'工場・加工' },
-  { id:'hospitality',   icon:'🏨', name:'サービス業', sub:'宿泊・飲食' },
-  { id:'retail',        icon:'🛒', name:'卸売・小売業', sub:'コンビニ・スーパー' },
-  { id:'construction',  icon:'🏗️', name:'建設業', sub:'現場・土木' },
-  { id:'care',          icon:'🏥', name:'医療・福祉', sub:'介護・病院' },
-  { id:'agriculture',   icon:'🌾', name:'農業・漁業', sub:'農場・漁港' },
+  {id:'manufacturing', icon:'🏭', name:'製造業',     sub:'工場・加工'},
+  {id:'hospitality',   icon:'🏨', name:'サービス業', sub:'宿泊・飲食'},
+  {id:'retail',        icon:'🛒', name:'卸売・小売', sub:'コンビニ・スーパー'},
+  {id:'construction',  icon:'🏗️', name:'建設業',     sub:'現場・土木'},
+  {id:'care',          icon:'🏥', name:'医療・福祉', sub:'介護・病院'},
+  {id:'agriculture',   icon:'🌾', name:'農業・漁業', sub:'農場・漁港'},
 ];
 
-// 言語マスター
 const ALL_LANGS = {
-  vi:{ name:'Tiếng Việt', flag:'🇻🇳', bcp:'vi-VN' },
-  id:{ name:'Bahasa',     flag:'🇮🇩', bcp:'id-ID' },
-  my:{ name:'မြန်မာ',    flag:'🇲🇲', bcp:'my-MM' },
-  tl:{ name:'Filipino',   flag:'🇵🇭', bcp:'fil-PH'},
-  en:{ name:'English',    flag:'🇺🇸', bcp:'en-US' },
-  zh:{ name:'中文',       flag:'🇨🇳', bcp:'zh-CN' },
-  th:{ name:'ภาษาไทย',   flag:'🇹🇭', bcp:'th-TH' },
-  ne:{ name:'नेपाली',    flag:'🇳🇵', bcp:'ne-NP' },
-  km:{ name:'ខ្មែរ',     flag:'🇰🇭', bcp:'km-KH' },
+  vi:{name:'Tiếng Việt',flag:'🇻🇳',bcp:'vi-VN'},
+  id:{name:'Bahasa',    flag:'🇮🇩',bcp:'id-ID'},
+  my:{name:'မြန်မာ',   flag:'🇲🇲',bcp:'my-MM'},
+  tl:{name:'Filipino',  flag:'🇵🇭',bcp:'fil-PH'},
+  en:{name:'English',   flag:'🇺🇸',bcp:'en-US'},
+  zh:{name:'中文',      flag:'🇨🇳',bcp:'zh-CN'},
+  th:{name:'ภาษาไทย',  flag:'🇹🇭',bcp:'th-TH'},
+  ne:{name:'नेपाली',   flag:'🇳🇵',bcp:'ne-NP'},
+  km:{name:'ខ្មែរ',    flag:'🇰🇭',bcp:'km-KH'},
 };
 
-// カテゴリーマスター
-const CATS_DEF = [
-  { id:'all',     label:'すべて' },
-  { id:'work',    label:'作業指示' },
-  { id:'safety',  label:'安全' },
-  { id:'quality', label:'品質' },
-  { id:'tools',   label:'工具' },
-  { id:'reply',   label:'返答' },
-];
-
 /*
-  フレーズデータ構造:
-  {
-    id: 数値,
-    cat: カテゴリーID,
-    jobs: ['all'] or ['manufacturing','construction',...],  ← 職種フィルター
-    jp: '日本語',
-    read: 'よみがな',
-    t: { en:'...', vi:'...', ... }
-  }
-  jobs:'all' → 全職種共通
-  jobs:['manufacturing'] → 製造業のみ表示
+  フレーズ構造:
+  jobs: 'all' | string[]  — 対象職種
+  cat:  カテゴリーID
+  jp/read/t: テキスト
 */
 const PHRASES = [
-  // ── 全職種共通：作業指示 ──
-  {id:1,  jobs:'all', cat:'work',    jp:'これをやってください',         read:'これをやってください',           t:{en:'Please do this',vi:'Vui lòng làm điều này',id:'Tolong lakukan ini',zh:'请做这个',tl:'Gawin ito',my:'ဒါကိုလုပ်ပေးပါ',th:'กรุณาทำสิ่งนี้',ne:'यो गर्नुस्',km:'សូមធ្វើរឿងនេះ'}},
-  {id:2,  jobs:'all', cat:'work',    jp:'こっちに来てください',         read:'こっちにきてください',           t:{en:'Please come here',vi:'Vui lòng lại đây',id:'Tolong ke sini',zh:'请过来',tl:'Pakihalika',my:'ဒီကိုလာပေးပါ',th:'กรุณามาที่นี่',ne:'यहाँ आउनुस्',km:'សូមមកទីនេះ'}},
-  {id:3,  jobs:'all', cat:'work',    jp:'ゆっくりやってください',       read:'ゆっくりやってください',         t:{en:'Please do it slowly',vi:'Làm chậm thôi',id:'Lakukan perlahan',zh:'请慢慢来',tl:'Dahan-dahan lang',my:'တဖြည်းဖြည်းလုပ်ပေးပါ',th:'ค่อยๆ ทำ',ne:'बिस्तारै गर्नुस्',km:'សូមធ្វើយឺតៗ'}},
-  {id:4,  jobs:'all', cat:'work',    jp:'もう一度やってください',       read:'もういちどやってください',       t:{en:'Please do it again',vi:'Làm lại đi',id:'Tolong lakukan lagi',zh:'请再做一遍',tl:'Gawin ulit',my:'နောက်တစ်ကြိမ်လုပ်ပေးပါ',th:'ทำอีกครั้ง',ne:'फेरि गर्नुस्',km:'សូមធ្វើម្ដងទៀត'}},
-  {id:5,  jobs:'all', cat:'work',    jp:'手伝ってください',             read:'てつだってください',             t:{en:'Please help me',vi:'Giúp tôi với',id:'Tolong bantu',zh:'请帮我',tl:'Tulungan mo ako',my:'ကူညီပေးပါ',th:'ช่วยหน่อย',ne:'मद्दत गर्नुस्',km:'ជួយខ្ញុំផង'}},
-  {id:6,  jobs:'all', cat:'work',    jp:'ここに置いてください',         read:'ここにおいてください',           t:{en:'Please put it here',vi:'Đặt vào đây',id:'Taruh di sini',zh:'请放在这里',tl:'Ilagay dito',my:'ဒီမှာထားပေးပါ',th:'วางไว้ที่นี่',ne:'यहाँ राख्नुस्',km:'ដាក់ទីនេះ'}},
-  {id:7,  jobs:'all', cat:'work',    jp:'休憩してください',             read:'きゅうけいしてください',         t:{en:'Please take a break',vi:'Hãy nghỉ ngơi',id:'Tolong istirahat',zh:'请休息',tl:'Magpahinga',my:'နားပေးပါ',th:'พักผ่อนด้วย',ne:'आराम गर्नुस्',km:'សូមឈប់សម្រាក'}},
-  // ── 全職種共通：安全 ──
-  {id:8,  jobs:'all', cat:'safety',  jp:'危ない！止まれ！',             read:'あぶない！とまれ！',             t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
-  {id:9,  jobs:'all', cat:'safety',  jp:'ヘルメットをかぶってください', read:'ヘルメットをかぶってください',   t:{en:'Please wear your helmet',vi:'Hãy đội mũ bảo hộ',id:'Tolong pakai helm',zh:'请戴安全帽',tl:'Suotin ang helmet',my:'ဦးထုပ်ဆောင်းပေးပါ',th:'ใส่หมวกนิรภัย',ne:'हेल्मेट लगाउनुस्',km:'ពាក់មួកសុវត្ថិភាព'}},
-  {id:10, jobs:'all', cat:'safety',  jp:'手袋をつけてください',         read:'てぶくろをつけてください',       t:{en:'Please wear gloves',vi:'Hãy đeo găng tay',id:'Tolong pakai sarung tangan',zh:'请戴手套',tl:'Suotin ang guwantes',my:'လက်အိတ်ဆောင်းပေးပါ',th:'ใส่ถุงมือ',ne:'पञ्जा लगाउनुस्',km:'ពាក់ស្រោមមេដៃ'}},
-  {id:11, jobs:'all', cat:'safety',  jp:'安全確認をしてください',       read:'あんぜんかくにんをしてください', t:{en:'Please do a safety check',vi:'Kiểm tra an toàn',id:'Lakukan cek keamanan',zh:'请检查安全',tl:'Suriin ang kaligtasan',my:'လုံခြုံရေးစစ်ပေးပါ',th:'ตรวจสอบความปลอดภัย',ne:'सुरक्षा जाँच गर्नुस्',km:'ពិនិត្យសុវត្ថិភាព'}},
-  // ── 全職種共通：返答 ──
-  {id:19, jobs:'all', cat:'reply',   jp:'わかりました',                 read:'わかりました',                   t:{en:'I understand',vi:'Tôi hiểu rồi',id:'Saya mengerti',zh:'我明白了',tl:'Naiintindihan ko',my:'နားလည်ပါသည်',th:'เข้าใจแล้ว',ne:'बुझें',km:'ខ្ញុំយល់ហើយ'}},
-  {id:20, jobs:'all', cat:'reply',   jp:'わかりません',                 read:'わかりません',                   t:{en:"I don't understand",vi:'Tôi không hiểu',id:'Saya tidak mengerti',zh:'我不明白',tl:'Hindi ko maintindihan',my:'နားမလည်ပါ',th:'ไม่เข้าใจ',ne:'बुझिएन',km:'ខ្ញុំមិនយល់'}},
-  {id:21, jobs:'all', cat:'reply',   jp:'もう一度お願いします',         read:'もういちどおねがいします',       t:{en:'Please say it again',vi:'Nói lại đi',id:'Ulangi lagi',zh:'请再说一遍',tl:'Pakiulit',my:'နောက်တစ်ကြိမ်ပြောပေးပါ',th:'พูดอีกครั้ง',ne:'फेरि भन्नुस्',km:'និយាយម្ដងទៀត'}},
-  {id:22, jobs:'all', cat:'reply',   jp:'終わりました',                 read:'おわりました',                   t:{en:'I finished',vi:'Xong rồi',id:'Sudah selesai',zh:'完成了',tl:'Tapos na',my:'ပြီးပါပြီ',th:'เสร็จแล้ว',ne:'सकियो',km:'រួចរាល់ហើយ'}},
-  {id:23, jobs:'all', cat:'reply',   jp:'少し待ってください',           read:'すこしまってください',           t:{en:'Please wait a moment',vi:'Chờ chút',id:'Tunggu sebentar',zh:'请稍等',tl:'Sandali lang',my:'ခဏစောင့်ပေးပါ',th:'รอแป๊บนึง',ne:'अलि पर्खनुस्',km:'រង់ចាំបន្តិច'}},
-  {id:24, jobs:'all', cat:'reply',   jp:'できません',                   read:'できません',                     t:{en:"I can't do it",vi:'Tôi không thể',id:'Saya tidak bisa',zh:'我不能做',tl:'Hindi ko kaya',my:'မလုပ်နိုင်ပါ',th:'ทำไม่ได้',ne:'गर्न सक्दिन',km:'ខ្ញុំធ្វើមិនបាន'}},
 
-  // ── 製造業・建設業：品質 ──
-  {id:12, jobs:['manufacturing','construction'], cat:'quality', jp:'寸法が違います',              read:'すんぽうがちがいます',           t:{en:'The dimensions are wrong',vi:'Kích thước sai',id:'Dimensinya salah',zh:'尺寸不对',tl:'Mali ang sukat',my:'အတိုင်းအတာမှားသည်',th:'ขนาดผิด',ne:'आयाम गलत छ',km:'ទំហំខុស'}},
-  {id:13, jobs:['manufacturing','construction'], cat:'quality', jp:'不良品です',                  read:'ふりょうひんです',               t:{en:'This is defective',vi:'Sản phẩm bị lỗi',id:'Ini produk cacat',zh:'这是不合格品',tl:'May depekto ito',my:'ချိုတဲ့ကုန်ပစ္စည်း',th:'สินค้าชำรุด',ne:'यो खराब उत्पाद हो',km:'ផលិតផលខូច'}},
-  {id:14, jobs:['manufacturing'],                cat:'quality', jp:'バリを取ってください',        read:'バリをとってください',           t:{en:'Remove the burrs',vi:'Loại bỏ bavia',id:'Hilangkan gerinda',zh:'去除毛刺',tl:'Alisin ang burr',my:'Burr ဖယ်ပေးပါ',th:'เอาเสี้ยนออก',ne:'बर्र हटाउनुस्',km:'យកស្រទាប់ចេញ'}},
-  {id:15, jobs:['manufacturing','construction'], cat:'quality', jp:'もう一度確認してください',    read:'もういちどかくにんしてください', t:{en:'Please check again',vi:'Kiểm tra lại',id:'Cek lagi',zh:'请再检查',tl:'Suriin ulit',my:'နောက်တစ်ကြိမ်စစ်ပေးပါ',th:'ตรวจสอบอีกครั้ง',ne:'फेरि जाँच गर्नुस्',km:'ពិនិត្យម្ដងទៀត'}},
-  // ── 製造業：工具 ──
-  {id:16, jobs:['manufacturing'],                cat:'tools',   jp:'これを使ってください',        read:'これをつかってください',         t:{en:'Please use this',vi:'Dùng cái này',id:'Gunakan ini',zh:'请用这个',tl:'Gamitin ito',my:'ဒါကိုသုံးပေးပါ',th:'ใช้สิ่งนี้',ne:'यो प्रयोग गर्नुस्',km:'ប្រើរបស់នេះ'}},
-  {id:17, jobs:['manufacturing'],                cat:'tools',   jp:'工具を返してください',        read:'こうぐをかえしてください',       t:{en:'Please return the tool',vi:'Trả dụng cụ lại',id:'Kembalikan alat',zh:'请归还工具',tl:'Ibalik ang kagamitan',my:'ကိရိယာပြန်ပေးပါ',th:'คืนเครื่องมือ',ne:'औजार फर्काउनुस्',km:'ប្រគល់ឧបករណ៍'}},
-  {id:18, jobs:['manufacturing'],                cat:'tools',   jp:'機械を止めてください',        read:'きかいをとめてください',         t:{en:'Please stop the machine',vi:'Vui lòng dừng máy',id:'Tolong hentikan mesinnya',zh:'请停止机器',tl:'Ihinto ang makina',my:'စက်ကိုရပ်ပေးပါ',th:'กรุณาหยุดเครื่อง',ne:'मेशिन रोक्नुस्',km:'សូមបញ្ឈប់ម៉ាស៊ីន'}},
+  /* ══════════════════════
+     共通：挨拶・基本
+  ══════════════════════ */
+  {id:1,  jobs:'all',cat:'basic',jp:'おはようございます',      read:'おはようございます',          t:{en:'Good morning',vi:'Xin chào buổi sáng',id:'Selamat pagi',zh:'早上好',tl:'Magandang umaga',my:'မင်္ဂလာနံနက်ခင်းပါ',th:'อรุณสวัสดิ์',ne:'शुभ प्रभात',km:'អរុណសួស្ដី'}},
+  {id:2,  jobs:'all',cat:'basic',jp:'お疲れ様です',            read:'おつかれさまです',             t:{en:'Good work today',vi:'Cảm ơn vì công sức',id:'Terima kasih sudah bekerja',zh:'辛苦了',tl:'Salamat sa pagsisikap',my:'ကြိုးစားမှုအတွက်ကျေးဇူးတင်သည်',th:'ขอบคุณสำหรับความพยายาม',ne:'मेहनतको लागि धन्यवाद',km:'អរគុណចំពោះការខិតខំ'}},
+  {id:3,  jobs:'all',cat:'basic',jp:'よろしくお願いします',    read:'よろしくおねがいします',       t:{en:'Nice to work with you',vi:'Mong được hợp tác',id:'Mohon kerja samanya',zh:'请多关照',tl:'Inaasahan ang iyong tulong',my:'ပူးပေါင်းဆောင်ရွက်ပေးပါ',th:'ขอความร่วมมือด้วย',ne:'सहयोगको लागि अनुरोध',km:'សូមសហការ'}},
+  {id:4,  jobs:'all',cat:'basic',jp:'わかりましたか？',        read:'わかりましたか？',              t:{en:'Did you understand?',vi:'Bạn hiểu chưa?',id:'Apakah kamu mengerti?',zh:'明白了吗？',tl:'Naintindihan mo ba?',my:'နားလည်ပြီလား？',th:'เข้าใจไหม?',ne:'बुझ्नुभयो?',km:'យល់ហើយឬ?'}},
+  {id:5,  jobs:'all',cat:'basic',jp:'質問はありますか？',      read:'しつもんはありますか？',       t:{en:'Do you have any questions?',vi:'Bạn có câu hỏi không?',id:'Ada pertanyaan?',zh:'有什么问题吗？',tl:'May tanong ka ba?',my:'မေးချင်တာရှိလား？',th:'มีคำถามไหม?',ne:'कुनै प्रश्न छ?',km:'មានសំណួរទេ?'}},
+  {id:6,  jobs:'all',cat:'basic',jp:'ゆっくり話してください', read:'ゆっくりはなしてください',     t:{en:'Please speak slowly',vi:'Nói chậm thôi',id:'Tolong bicara pelan',zh:'请说慢一点',tl:'Magsalita nang dahan-dahan',my:'တဖြည်းဖြည်းပြောပေးပါ',th:'พูดช้าๆ หน่อย',ne:'बिस्तारै बोल्नुस्',km:'សូមនិយាយយឺតៗ'}},
 
-  // ── 建設業専用 ──
-  {id:30, jobs:['construction'],                 cat:'safety',  jp:'足場に気をつけてください',    read:'あしばにきをつけてください',     t:{en:'Be careful of the scaffolding',vi:'Cẩn thận giàn giáo',id:'Hati-hati dengan perancah',zh:'注意脚手架',tl:'Mag-ingat sa scaffolding',my:'တုတ်ကိုသတိထားပေးပါ',th:'ระวังนั่งร้าน',ne:'ढाँचामा सावधान रहनुस्',km:'ระวังนั่งร้าน'}},
-  {id:31, jobs:['construction'],                 cat:'work',    jp:'ここを掘ってください',        read:'ここをほってください',           t:{en:'Please dig here',vi:'Hãy đào ở đây',id:'Tolong gali di sini',zh:'请在这里挖',tl:'Humukay dito',my:'ဒီမှာတူးပေးပါ',th:'ขุดที่นี่',ne:'यहाँ खन्नुस्',km:'សូមជីកទីនេះ'}},
+  /* ══════════════════════
+     共通：作業指示
+  ══════════════════════ */
+  {id:10, jobs:'all',cat:'work',jp:'これをやってください',      read:'これをやってください',         t:{en:'Please do this',vi:'Vui lòng làm điều này',id:'Tolong lakukan ini',zh:'请做这个',tl:'Gawin ito',my:'ဒါကိုလုပ်ပေးပါ',th:'กรุณาทำสิ่งนี้',ne:'यो गर्नुस्',km:'សូមធ្វើរឿងនេះ'}},
+  {id:11, jobs:'all',cat:'work',jp:'こっちに来てください',      read:'こっちにきてください',         t:{en:'Please come here',vi:'Vui lòng lại đây',id:'Tolong ke sini',zh:'请过来',tl:'Pakihalika',my:'ဒီကိုလာပေးပါ',th:'กรุณามาที่นี่',ne:'यहाँ आउनुस्',km:'សូមមកទីនេះ'}},
+  {id:12, jobs:'all',cat:'work',jp:'ここに置いてください',      read:'ここにおいてください',         t:{en:'Please put it here',vi:'Đặt vào đây',id:'Taruh di sini',zh:'请放在这里',tl:'Ilagay dito',my:'ဒီမှာထားပေးပါ',th:'วางไว้ที่นี่',ne:'यहाँ राख्नुस्',km:'ដាក់ទីនេះ'}},
+  {id:13, jobs:'all',cat:'work',jp:'もう一度やってください',    read:'もういちどやってください',     t:{en:'Please do it again',vi:'Làm lại đi',id:'Tolong lakukan lagi',zh:'请再做一遍',tl:'Gawin ulit',my:'နောက်တစ်ကြိမ်လုပ်ပေးပါ',th:'ทำอีกครั้ง',ne:'फेरि गर्नुस्',km:'សូមធ្វើម្ដងទៀត'}},
+  {id:14, jobs:'all',cat:'work',jp:'手伝ってください',          read:'てつだってください',           t:{en:'Please help me',vi:'Giúp tôi với',id:'Tolong bantu',zh:'请帮我',tl:'Tulungan mo ako',my:'ကူညီပေးပါ',th:'ช่วยหน่อย',ne:'मद्दत गर्नुस्',km:'ជួយខ្ញុំផង'}},
+  {id:15, jobs:'all',cat:'work',jp:'休憩してください',          read:'きゅうけいしてください',       t:{en:'Please take a break',vi:'Hãy nghỉ ngơi',id:'Tolong istirahat',zh:'请休息',tl:'Magpahinga',my:'နားပေးပါ',th:'พักผ่อนด้วย',ne:'आराम गर्नुस्',km:'សូមឈប់សម្រាក'}},
+  {id:16, jobs:'all',cat:'work',jp:'急いでください',            read:'いそいでください',             t:{en:'Please hurry',vi:'Hãy nhanh lên',id:'Tolong cepat',zh:'请快点',tl:'Magmadali',my:'မြန်မြန်လုပ်ပေးပါ',th:'รีบหน่อย',ne:'छिटो गर्नुस्',km:'សូមប្រញាប់'}},
+  {id:17, jobs:'all',cat:'work',jp:'ゆっくりやってください',    read:'ゆっくりやってください',       t:{en:'Please do it slowly',vi:'Làm chậm thôi',id:'Lakukan perlahan',zh:'请慢慢来',tl:'Dahan-dahan lang',my:'တဖြည်းဖြည်းလုပ်ပေးပါ',th:'ค่อยๆ ทำ',ne:'बिस्तारै गर्नुस्',km:'សូមធ្វើយឺតៗ'}},
 
-  // ── サービス業（宿泊・飲食）専用 ──
-  {id:40, jobs:['hospitality'],                  cat:'work',    jp:'お客様をご案内してください',  read:'おきゃくさまをごあんないしてください', t:{en:'Please guide the customer',vi:'Hãy hướng dẫn khách',id:'Tolong pandu tamu',zh:'请引导客人',tl:'Gabayan ang customer',my:'ဧည့်သည်ကိုလမ်းပြပေးပါ',th:'นำทางลูกค้า',ne:'ग्राहकलाई मार्गदर्शन गर्नुस्',km:'សូមណែនាំភ្ញៀវ'}},
-  {id:41, jobs:['hospitality'],                  cat:'work',    jp:'テーブルを拭いてください',    read:'テーブルをふいてください',       t:{en:'Please wipe the table',vi:'Hãy lau bàn',id:'Tolong lap meja',zh:'请擦桌子',tl:'Punasan ang mesa',my:'စားပွဲကိုသုတ်ပေးပါ',th:'เช็ดโต๊ะด้วย',ne:'टेबल पुछ्नुस्',km:'សូមជូតតុ'}},
+  /* ══════════════════════
+     共通：安全
+  ══════════════════════ */
+  {id:20, jobs:'all',cat:'safety',jp:'危ない！止まれ！',             read:'あぶない！とまれ！',           t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
+  {id:21, jobs:'all',cat:'safety',jp:'ヘルメットをかぶってください', read:'ヘルメットをかぶってください', t:{en:'Please wear your helmet',vi:'Hãy đội mũ bảo hộ',id:'Tolong pakai helm',zh:'请戴安全帽',tl:'Suotin ang helmet',my:'ဦးထုပ်ဆောင်းပေးပါ',th:'ใส่หมวกนิรภัย',ne:'हेल्मेट लगाउनुस्',km:'ពាក់មួកសុវត្ថិភាព'}},
+  {id:22, jobs:'all',cat:'safety',jp:'手袋をつけてください',         read:'てぶくろをつけてください',     t:{en:'Please wear gloves',vi:'Hãy đeo găng tay',id:'Tolong pakai sarung tangan',zh:'请戴手套',tl:'Suotin ang guwantes',my:'လက်အိတ်ဆောင်းပေးပါ',th:'ใส่ถุงมือ',ne:'पञ्जा लगाउनुस्',km:'ពាក់ស្រោមមេដៃ'}},
+  {id:23, jobs:'all',cat:'safety',jp:'安全確認をしてください',       read:'あんぜんかくにんをしてください',t:{en:'Please do a safety check',vi:'Kiểm tra an toàn',id:'Lakukan cek keamanan',zh:'请检查安全',tl:'Suriin ang kaligtasan',my:'လုံခြုံရေးစစ်ပေးပါ',th:'ตรวจสอบความปลอดภัย',ne:'सुरक्षा जाँच गर्नुस्',km:'ពិនិត្យសុវត្ថិភាព'}},
 
-  // ── 小売業専用 ──
-  {id:50, jobs:['retail'],                       cat:'work',    jp:'商品を補充してください',      read:'しょうひんをほじゅうしてください', t:{en:'Please restock the products',vi:'Hãy bổ sung hàng hóa',id:'Tolong isi ulang produk',zh:'请补充商品',tl:'Mag-restock ng produkto',my:'ကုန်ပစ္စည်းဖြည့်ပေးပါ',th:'เติมสินค้า',ne:'सामान भर्नुस्',km:'សូមបំពេញទំនិញ'}},
-  {id:51, jobs:['retail'],                       cat:'work',    jp:'レジに入ってください',        read:'レジにはいってください',         t:{en:'Please go to the register',vi:'Hãy vào quầy thu ngân',id:'Tolong masuk ke kasir',zh:'请到收银台',tl:'Pumunta sa register',my:'ကောင်တာဝင်ပေးပါ',th:'เข้าแคชเชียร์',ne:'काउन्टरमा जानुस्',km:'សូមចូលទៅបញ្ជរ'}},
+  /* ══════════════════════
+     共通：返答
+  ══════════════════════ */
+  {id:30, jobs:'all',cat:'reply',jp:'わかりました',                 read:'わかりました',                 t:{en:'I understand',vi:'Tôi hiểu rồi',id:'Saya mengerti',zh:'我明白了',tl:'Naiintindihan ko',my:'နားလည်ပါသည်',th:'เข้าใจแล้ว',ne:'बुझें',km:'ខ្ញុំយល់ហើយ'}},
+  {id:31, jobs:'all',cat:'reply',jp:'わかりません',                 read:'わかりません',                 t:{en:"I don't understand",vi:'Tôi không hiểu',id:'Saya tidak mengerti',zh:'我不明白',tl:'Hindi ko maintindihan',my:'နားမလည်ပါ',th:'ไม่เข้าใจ',ne:'बुझिएन',km:'ខ្ញុំមិនយល់'}},
+  {id:32, jobs:'all',cat:'reply',jp:'もう一度お願いします',         read:'もういちどおねがいします',     t:{en:'Please say it again',vi:'Nói lại đi',id:'Ulangi lagi',zh:'请再说一遍',tl:'Pakiulit',my:'နောက်တစ်ကြိမ်ပြောပေးပါ',th:'พูดอีกครั้ง',ne:'फेरि भन्नुस्',km:'និយាយម្ដងទៀត'}},
+  {id:33, jobs:'all',cat:'reply',jp:'終わりました',                 read:'おわりました',                 t:{en:'I finished',vi:'Xong rồi',id:'Sudah selesai',zh:'完成了',tl:'Tapos na',my:'ပြီးပါပြီ',th:'เสร็จแล้ว',ne:'सकियो',km:'រួចរាល់ហើយ'}},
+  {id:34, jobs:'all',cat:'reply',jp:'少し待ってください',           read:'すこしまってください',         t:{en:'Please wait a moment',vi:'Chờ chút',id:'Tunggu sebentar',zh:'请稍等',tl:'Sandali lang',my:'ခဏစောင့်ပေးပါ',th:'รอแป๊บนึง',ne:'अलि पर्खनुस्',km:'រង់ចាំបន្តិច'}},
+  {id:35, jobs:'all',cat:'reply',jp:'できません',                   read:'できません',                   t:{en:"I can't do it",vi:'Tôi không thể',id:'Saya tidak bisa',zh:'我做不到',tl:'Hindi ko kaya',my:'မလုပ်နိုင်ပါ',th:'ทำไม่ได้',ne:'गर्न सक्दिन',km:'ខ្ញុំធ្វើមិនបាន'}},
+  {id:36, jobs:'all',cat:'reply',jp:'体調が悪いです',               read:'たいちょうがわるいです',       t:{en:"I don't feel well",vi:'Tôi không khỏe',id:'Saya tidak enak badan',zh:'我身体不舒服',tl:'Hindi ako maayos',my:'ကျန်းမာရေးမကောင်းပါ',th:'ไม่สบาย',ne:'मलाई राम्रो लागेन',km:'ខ្ញុំមិនស្រួល'}},
 
-  // ── 介護専用 ──
-  {id:60, jobs:['care'],                         cat:'work',    jp:'体を起こしましょう',          read:'からだをおこしましょう',         t:{en:"Let's sit you up",vi:'Hãy ngồi dậy',id:'Mari duduk',zh:'让我们坐起来',tl:"Tayo'y umupo",my:'ထိုင်ကြမည်',th:'ลุกนั่งกัน',ne:'बस्नुस् है',km:'ក្រោកអង្គុយ'}},
-  {id:61, jobs:['care'],                         cat:'work',    jp:'薬の時間です',                read:'くすりのじかんです',             t:{en:"It's time for your medicine",vi:'Đến giờ uống thuốc',id:'Waktunya minum obat',zh:'该吃药了',tl:'Oras na ng gamot',my:'ဆေးသောက်ချိန်ရောက်ပြီ',th:'ถึงเวลากินยา',ne:'औषधी खाने समय भयो',km:'ដល់ពេលញ៉ាំថ្នាំ'}},
+  /* ══════════════════════
+     製造業
+  ══════════════════════ */
+  {id:100,jobs:['manufacturing'],cat:'work',   jp:'機械を起動してください',      read:'きかいをきどうしてください',    t:{en:'Please start the machine',vi:'Khởi động máy',id:'Nyalakan mesin',zh:'请启动机器',tl:'I-start ang makina',my:'စက်ကိုဖွင့်ပေးပါ',th:'เปิดเครื่อง',ne:'मेशिन चालु गर्नुस्',km:'ចាប់ផ្ដើមម៉ាស៊ីន'}},
+  {id:101,jobs:['manufacturing'],cat:'work',   jp:'機械を止めてください',        read:'きかいをとめてください',        t:{en:'Please stop the machine',vi:'Dừng máy',id:'Hentikan mesin',zh:'请停止机器',tl:'Ihinto ang makina',my:'စက်ကိုရပ်ပေးပါ',th:'หยุดเครื่อง',ne:'मेशिन रोक्नुस्',km:'ឈប់ម៉ាស៊ីន'}},
+  {id:102,jobs:['manufacturing'],cat:'work',   jp:'この部品をセットしてください', read:'このぶひんをセットしてください', t:{en:'Please set this part',vi:'Lắp bộ phận này',id:'Pasang bagian ini',zh:'请安装这个零件',tl:'I-set ang part na ito',my:'ဤအစိတ်အပိုင်းကိုတပ်ဆင်ပေးပါ',th:'ติดตั้งชิ้นส่วนนี้',ne:'यो पार्ट सेट गर्नुस्',km:'ដំឡើងគ្រឿងបន្លាស់នេះ'}},
+  {id:103,jobs:['manufacturing'],cat:'work',   jp:'ラインを止めないでください',   read:'ラインをとめないでください',    t:{en:'Please do not stop the line',vi:'Đừng dừng dây chuyền',id:'Jangan hentikan lini produksi',zh:'请不要停线',tl:'Huwag ihinto ang linya',my:'လိုင်းကိုမရပ်ပေးပါ',th:'อย่าหยุดสายการผลิต',ne:'लाइन नरोक्नुस्',km:'មិនត្រូវឈប់ខ្សែផ្សាយ'}},
+  {id:104,jobs:['manufacturing'],cat:'work',   jp:'数を数えてください',          read:'かずをかぞえてください',        t:{en:'Please count the quantity',vi:'Hãy đếm số lượng',id:'Tolong hitung jumlahnya',zh:'请数一下数量',tl:'Bilangin ang dami',my:'အရေအတွက်ရေပေးပါ',th:'นับจำนวน',ne:'संख्या गन्नुस्',km:'រាប់ចំនួន'}},
+  {id:105,jobs:['manufacturing'],cat:'quality',jp:'寸法が違います',              read:'すんぽうがちがいます',          t:{en:'The dimensions are wrong',vi:'Kích thước sai',id:'Dimensinya salah',zh:'尺寸不对',tl:'Mali ang sukat',my:'အတိုင်းအတာမှားသည်',th:'ขนาดผิด',ne:'आयाम गलत छ',km:'ទំហំខុស'}},
+  {id:106,jobs:['manufacturing'],cat:'quality',jp:'不良品です',                  read:'ふりょうひんです',              t:{en:'This is defective',vi:'Sản phẩm bị lỗi',id:'Ini produk cacat',zh:'这是不合格品',tl:'May depekto ito',my:'ချိုတဲ့ကုန်ပစ္စည်း',th:'สินค้าชำรุด',ne:'यो खराब उत्पाद हो',km:'ផលិតផលខូច'}},
+  {id:107,jobs:['manufacturing'],cat:'quality',jp:'バリを取ってください',        read:'バリをとってください',          t:{en:'Remove the burrs',vi:'Loại bỏ bavia',id:'Hilangkan gerinda',zh:'去除毛刺',tl:'Alisin ang burr',my:'Burr ဖယ်ပေးပါ',th:'เอาเสี้ยนออก',ne:'बर्र हटाउनुस्',km:'យកស្រទាប់ចេញ'}},
+  {id:108,jobs:['manufacturing'],cat:'quality',jp:'もう一度検査してください',    read:'もういちどけんさしてください',  t:{en:'Please inspect again',vi:'Kiểm tra lại',id:'Periksa lagi',zh:'请再检验一次',tl:'Suriin ulit',my:'နောက်တစ်ကြိမ်စစ်ဆေးပေးပါ',th:'ตรวจสอบอีกครั้ง',ne:'फेरि जाँच गर्नुस्',km:'ពិនិត្យម្ដងទៀត'}},
+  {id:109,jobs:['manufacturing'],cat:'quality',jp:'サイズを測ってください',      read:'サイズをはかってください',      t:{en:'Please measure the size',vi:'Đo kích thước',id:'Ukur ukurannya',zh:'请测量尺寸',tl:'Sukatin ang laki',my:'အရွယ်အစားတိုင်းပေးပါ',th:'วัดขนาด',ne:'साइज मापन गर्नुस्',km:'វាស់ទំហំ'}},
+  {id:110,jobs:['manufacturing'],cat:'tools',  jp:'これを使ってください',        read:'これをつかってください',        t:{en:'Please use this',vi:'Dùng cái này',id:'Gunakan ini',zh:'请用这个',tl:'Gamitin ito',my:'ဒါကိုသုံးပေးပါ',th:'ใช้สิ่งนี้',ne:'यो प्रयोग गर्नुस्',km:'ប្រើរបស់នេះ'}},
+  {id:111,jobs:['manufacturing'],cat:'tools',  jp:'工具を返してください',        read:'こうぐをかえしてください',      t:{en:'Return the tool',vi:'Trả dụng cụ lại',id:'Kembalikan alat',zh:'归还工具',tl:'Ibalik ang kagamitan',my:'ကိရိယာပြန်ပေးပါ',th:'คืนเครื่องมือ',ne:'औजार फर्काउनुस्',km:'ប្រគល់ឧបករណ៍'}},
+  {id:112,jobs:['manufacturing'],cat:'tools',  jp:'油を差してください',          read:'あぶらをさしてください',        t:{en:'Please lubricate it',vi:'Tra dầu vào',id:'Tolong lumasi',zh:'请加润滑油',tl:'Lagyan ng grasa',my:'ဆီလိမ်းပေးပါ',th:'หล่อลื่น',ne:'तेल लगाउनुस्',km:'ដាក់ប្រេង'}},
+  {id:113,jobs:['manufacturing'],cat:'safety', jp:'保護メガネをつけてください',  read:'ほごメガネをつけてください',    t:{en:'Please wear safety glasses',vi:'Đeo kính bảo hộ',id:'Pakai kacamata pelindung',zh:'请戴防护眼镜',tl:'Magsuot ng safety glasses',my:'မျက်မှန်ကိုဆောင်းပေးပါ',th:'ใส่แว่นตาป้องกัน',ne:'सुरक्षा चश्मा लगाउनुस्',km:'ពាក់វ៉ែនតាការពារ'}},
 
-  // ── 農業専用 ──
-  {id:70, jobs:['agriculture'],                  cat:'work',    jp:'ここを収穫してください',      read:'ここをしゅうかくしてください',   t:{en:'Please harvest here',vi:'Hãy thu hoạch ở đây',id:'Tolong panen di sini',zh:'请在这里收割',tl:'Mag-ani dito',my:'ဒီမှာသီးနှံကောက်ပေးပါ',th:'เก็บเกี่ยวที่นี่',ne:'यहाँ फसल काट्नुस्',km:'សូមប្រមូលផ្តុំទីនេះ'}},
-  {id:71, jobs:['agriculture'],                  cat:'safety',  jp:'熱中症に気をつけてください',  read:'ねっちゅうしょうにきをつけてください', t:{en:'Be careful of heatstroke',vi:'Cẩn thận say nắng',id:'Hati-hati kena heatstroke',zh:'注意中暑',tl:'Mag-ingat sa init',my:'နေပူဒဏ်သတိထားပေးပါ',th:'ระวังฮีทสโตรก',ne:'लूको सावधान रहनुस्',km:'ระวังฮีทสโตรก'}},
+  /* ══════════════════════
+     サービス業（宿泊・飲食）
+  ══════════════════════ */
+  {id:200,jobs:['hospitality'],cat:'work',jp:'お客様をご案内してください',       read:'おきゃくさまをごあんないしてください',t:{en:'Please guide the customer',vi:'Hãy hướng dẫn khách',id:'Tolong pandu tamu',zh:'请引导客人',tl:'Gabayan ang customer',my:'ဧည့်သည်ကိုလမ်းပြပေးပါ',th:'นำทางลูกค้า',ne:'ग्राहकलाई मार्गदर्शन गर्नुस्',km:'សូមណែនាំភ្ញៀវ'}},
+  {id:201,jobs:['hospitality'],cat:'work',jp:'テーブルを拭いてください',         read:'テーブルをふいてください',      t:{en:'Please wipe the table',vi:'Lau bàn đi',id:'Lap meja',zh:'擦桌子',tl:'Punasan ang mesa',my:'စားပွဲကိုသုတ်ပေးပါ',th:'เช็ดโต๊ะ',ne:'टेबल पुछ्नुस्',km:'ជូតតុ'}},
+  {id:202,jobs:['hospitality'],cat:'work',jp:'食器を洗ってください',             read:'しょっきをあらってください',    t:{en:'Please wash the dishes',vi:'Rửa bát đi',id:'Cuci piring',zh:'请洗碗',tl:'Hugasan ang pinggan',my:'ပန်းကန်များဆေးပေးပါ',th:'ล้างจาน',ne:'भाँडा धुनुस्',km:'លាងចាន'}},
+  {id:203,jobs:['hospitality'],cat:'work',jp:'部屋を掃除してください',           read:'へやをそうじしてください',      t:{en:'Please clean the room',vi:'Dọn phòng',id:'Bersihkan kamar',zh:'请打扫房间',tl:'Linisin ang kwarto',my:'အခန်းသန့်ရှင်းပေးပါ',th:'ทำความสะอาดห้อง',ne:'कोठा सफा गर्नुस्',km:'សំអាតបន្ទប់'}},
+  {id:204,jobs:['hospitality'],cat:'work',jp:'シーツを交換してください',         read:'シーツをこうかんしてください',  t:{en:'Please change the sheets',vi:'Thay ga giường',id:'Ganti seprai',zh:'请换床单',tl:'Palitan ang kumot',my:'အိပ်ရာခင်းလဲပေးပါ',th:'เปลี่ยนผ้าปูที่นอน',ne:'चादर फेर्नुस्',km:'ប្ដូរក្រណាត់គ្រែ'}},
+  {id:205,jobs:['hospitality'],cat:'work',jp:'ゴミを捨ててください',             read:'ゴミをすててください',          t:{en:'Please throw away the trash',vi:'Vứt rác',id:'Buang sampah',zh:'请扔垃圾',tl:'Itapon ang basura',my:'အမှိုက်ပစ်ပေးပါ',th:'ทิ้งขยะ',ne:'फोहोर फाल्नुस्',km:'បោះសំរាម'}},
+  {id:206,jobs:['hospitality'],cat:'work',jp:'料理を提供してください',           read:'りょうりをていきょうしてください',t:{en:'Please serve the food',vi:'Phục vụ món ăn',id:'Sajikan makanan',zh:'请上菜',tl:'Ihain ang pagkain',my:'အစားအစာတည်ခင်းပေးပါ',th:'เสิร์ฟอาหาร',ne:'खाना परोस्नुस्',km:'ដាក់អាហារ'}},
+  {id:207,jobs:['hospitality'],cat:'work',jp:'アレルギーを確認してください',     read:'アレルギーをかくにんしてください',t:{en:'Please check for allergies',vi:'Kiểm tra dị ứng',id:'Cek alergi',zh:'请确认过敏',tl:'I-check ang allergy',my:'ဓာတ်မတည့်မှုစစ်ပေးပါ',th:'ตรวจสอบภูมิแพ้',ne:'एलर्जी जाँच गर्नुस्',km:'ពិនិត្យអាល្លែហ្ស៊ី'}},
+  {id:208,jobs:['hospitality'],cat:'safety',jp:'床が濡れています',              read:'ゆかがぬれています',            t:{en:'The floor is wet',vi:'Sàn bị ướt',id:'Lantai basah',zh:'地板湿了',tl:'Basa ang sahig',my:'ကြမ်းခင်းစိုနေသည်',th:'พื้นเปียก',ne:'भुइँ भिजेको छ',km:'ឥដ្ឋសើម'}},
+  {id:209,jobs:['hospitality'],cat:'safety',jp:'熱いので気をつけてください',    read:'あついのできをつけてください',  t:{en:'It is hot, be careful',vi:'Nóng lắm, cẩn thận',id:'Panas, hati-hati',zh:'很热，小心',tl:'Mainit, mag-ingat',my:'ပူသည်၊ သတိထားပေးပါ',th:'ร้อน ระวัง',ne:'तातो छ, सावधान',km:'ក្ដៅ ប្រយ័ត្ន'}},
+  {id:210,jobs:['hospitality'],cat:'work',jp:'笑顔で接客してください',          read:'えがおでせっきゃくしてください', t:{en:'Please serve with a smile',vi:'Phục vụ với nụ cười',id:'Layani dengan senyum',zh:'请微笑服务',tl:'Maglingkod nang may ngiti',my:'အပြုံးဖြင့်ဝန်ဆောင်ပေးပါ',th:'บริการด้วยรอยยิ้ม',ne:'मुस्कुराएर सेवा गर्नुस्',km:'បម្រើជាមួយស្នាមញញឹម'}},
+
+  /* ══════════════════════
+     小売業
+  ══════════════════════ */
+  {id:300,jobs:['retail'],cat:'work',jp:'商品を補充してください',               read:'しょうひんをほじゅうしてください',t:{en:'Please restock the products',vi:'Bổ sung hàng hóa',id:'Isi ulang produk',zh:'补充商品',tl:'Mag-restock ng produkto',my:'ကုန်ပစ္စည်းဖြည့်ပေးပါ',th:'เติมสินค้า',ne:'सामान भर्नुस्',km:'បំពេញទំនិញ'}},
+  {id:301,jobs:['retail'],cat:'work',jp:'レジに入ってください',                 read:'レジにはいってください',        t:{en:'Please go to the register',vi:'Vào quầy thu ngân',id:'Masuk ke kasir',zh:'请到收银台',tl:'Pumunta sa register',my:'ကောင်တာဝင်ပေးပါ',th:'ไปที่แคชเชียร์',ne:'काउन्टरमा जानुस्',km:'ចូលទៅបញ្ជរ'}},
+  {id:302,jobs:['retail'],cat:'work',jp:'値札を確認してください',               read:'ねふだをかくにんしてください',   t:{en:'Please check the price tag',vi:'Kiểm tra nhãn giá',id:'Cek label harga',zh:'请确认价格标签',tl:'I-check ang price tag',my:'စျေးနှုန်းပြားစစ်ပေးပါ',th:'ตรวจสอบป้ายราคา',ne:'मूल्य ट्याग जाँच गर्नुस्',km:'ពិនិត្យស្លាកតម្លៃ'}},
+  {id:303,jobs:['retail'],cat:'work',jp:'賞味期限を確認してください',           read:'しょうみきげんをかくにんしてください',t:{en:'Please check the expiry date',vi:'Kiểm tra hạn sử dụng',id:'Cek tanggal kadaluarsa',zh:'检查保质期',tl:'I-check ang expiry date',my:'သက်တမ်းကုန်ဆုံးရက်စစ်ပေးပါ',th:'ตรวจสอบวันหมดอายุ',ne:'म्याद जाँच गर्नुस्',km:'ពិនិត្យកាលបរិច្ឆេទផុតកំណត់'}},
+  {id:304,jobs:['retail'],cat:'work',jp:'陳列を直してください',                 read:'ちんれつをなおしてください',     t:{en:'Please fix the display',vi:'Sắp xếp trưng bày lại',id:'Perbaiki tampilan',zh:'整理陈列',tl:'Ayusin ang display',my:'ပြသမှုကိုပြင်ပေးပါ',th:'จัดเรียงสินค้า',ne:'डिस्प्ले मिलाउनुस्',km:'ដាក់តាំងពណ៌ណា'}},
+  {id:305,jobs:['retail'],cat:'work',jp:'在庫を数えてください',                 read:'ざいこをかぞえてください',       t:{en:'Please count the stock',vi:'Đếm hàng tồn kho',id:'Hitung stok',zh:'请盘点库存',tl:'Bilangin ang stock',my:'ကုန်လှောင်မှုရေပေးပါ',th:'นับสต็อก',ne:'स्टक गन्नुस्',km:'រាប់ស្តុក'}},
+  {id:306,jobs:['retail'],cat:'work',jp:'袋に入れてください',                   read:'ふくろにいれてください',         t:{en:'Please put it in a bag',vi:'Cho vào túi',id:'Masukkan ke kantong',zh:'请装袋',tl:'Ilagay sa bag',my:'အိတ်ထဲထည့်ပေးပါ',th:'ใส่ถุง',ne:'झोलामा हाल्नुस्',km:'ដាក់ក្នុងថង់'}},
+  {id:307,jobs:['retail'],cat:'safety',jp:'スリップに気をつけてください',       read:'スリップにきをつけてください',   t:{en:'Be careful of slipping',vi:'Cẩn thận trượt ngã',id:'Hati-hati licin',zh:'小心滑倒',tl:'Mag-ingat sa madulas',my:'ချောမြောက်ခြင်းကိုသတိထားပေးပါ',th:'ระวังลื่น',ne:'चिप्लिनबाट सावधान',km:'ប្រយ័ត្នអ្នកជ្រូក'}},
+  {id:308,jobs:['retail'],cat:'work',jp:'お客様が呼んでいます',                 read:'おきゃくさまがよんでいます',     t:{en:'A customer is calling you',vi:'Khách hàng đang gọi bạn',id:'Ada pelanggan memanggil',zh:'顾客在叫你',tl:'May customer na tumatawag',my:'ဧည့်သည်ခေါ်နေသည်',th:'ลูกค้าเรียก',ne:'ग्राहकले बोलाउँदै छन्',km:'អតិថិជនកំពុងហៅ'}},
+
+  /* ══════════════════════
+     建設業
+  ══════════════════════ */
+  {id:400,jobs:['construction'],cat:'work',  jp:'資材を運んでください',         read:'しざいをはこんでください',      t:{en:'Please carry the materials',vi:'Vận chuyển vật liệu',id:'Angkat material',zh:'请搬运材料',tl:'Dalhin ang materyales',my:'ပစ္စည်းများသယ်ပေးပါ',th:'ขนวัสดุ',ne:'सामग्री ओसार्नुस्',km:'ដឹកជញ្ជូនសម្ភារៈ'}},
+  {id:401,jobs:['construction'],cat:'work',  jp:'ここを掘ってください',         read:'ここをほってください',          t:{en:'Please dig here',vi:'Đào ở đây',id:'Gali di sini',zh:'请在这里挖',tl:'Humukay dito',my:'ဒီမှာတူးပေးပါ',th:'ขุดที่นี่',ne:'यहाँ खन्नुस्',km:'ជីកទីនេះ'}},
+  {id:402,jobs:['construction'],cat:'work',  jp:'コンクリートを流してください', read:'コンクリートをながしてください', t:{en:'Please pour the concrete',vi:'Đổ bê tông',id:'Tuangkan beton',zh:'请浇灌混凝土',tl:'Ibuhos ang semento',my:'ကွန်ကရစ်လောင်းပေးပါ',th:'เทคอนกรีต',ne:'कंक्रिट खन्याउनुस्',km:'ចាក់ប៊ីតុំ'}},
+  {id:403,jobs:['construction'],cat:'work',  jp:'足場を組んでください',         read:'あしばをくんでください',        t:{en:'Please assemble the scaffolding',vi:'Lắp giàn giáo',id:'Pasang perancah',zh:'搭建脚手架',tl:'I-assemble ang scaffolding',my:'ကြမ်းပြင်ဗိုက်တပ်ဆင်ပေးပါ',th:'ประกอบนั่งร้าน',ne:'ढाँचा जोड्नुस्',km:'ដំឡើងជ័ររំលាស'}},
+  {id:404,jobs:['construction'],cat:'work',  jp:'寸法を測ってください',         read:'すんぽうをはかってください',    t:{en:'Please measure the dimensions',vi:'Đo kích thước',id:'Ukur dimensinya',zh:'量尺寸',tl:'Sukatin ang dimensyon',my:'အတိုင်းအတာတိုင်းပေးပါ',th:'วัดขนาด',ne:'आयाम मापन गर्नुस्',km:'វាស់វែង'}},
+  {id:405,jobs:['construction'],cat:'safety',jp:'足場に気をつけてください',     read:'あしばにきをつけてください',    t:{en:'Be careful of the scaffolding',vi:'Cẩn thận giàn giáo',id:'Hati-hati dengan perancah',zh:'注意脚手架',tl:'Mag-ingat sa scaffolding',my:'တုတ်ကိုသတိထားပေးပါ',th:'ระวังนั่งร้าน',ne:'ढाँचामा सावधान',km:'ប្រយ័ត្ននឹងជ័ររំលាស'}},
+  {id:406,jobs:['construction'],cat:'safety',jp:'落下物に注意してください',     read:'らっかぶつにちゅういしてください',t:{en:'Watch out for falling objects',vi:'Cẩn thận vật rơi',id:'Hati-hati benda jatuh',zh:'注意坠落物',tl:'Mag-ingat sa nahuhulog na bagay',my:'ကျဆင်းနေသောပစ္စည်းများကိုသတိထားပေးပါ',th:'ระวังของตก',ne:'खसेको वस्तुमा सावधान',km:'ប្រយ័ត្នវត្ថុធ្លាក់'}},
+  {id:407,jobs:['construction'],cat:'safety',jp:'安全帯をつけてください',       read:'あんぜんたいをつけてください',  t:{en:'Please wear the safety harness',vi:'Đeo dây an toàn',id:'Pakai tali pengaman',zh:'系好安全带',tl:'Magsuot ng safety harness',my:'လုံခြုံရေးကြိုးဆောင်းပေးပါ',th:'คาดเข็มขัดนิรภัย',ne:'सुरक्षा हार्नेस लगाउनुस्',km:'ពាក់ខ្សែសុវត្ថិភាព'}},
+  {id:408,jobs:['construction'],cat:'safety',jp:'重機が来ます',                read:'じゅうきがきます',              t:{en:'Heavy machinery is coming',vi:'Máy nặng đang đến',id:'Alat berat datang',zh:'重型机械来了',tl:'May mabigat na makina',my:'လေးလံသောစက်ပစ္စည်းလာနေသည်',th:'รถหนักกำลังมา',ne:'भारी मेशिन आउँदैछ',km:'ម៉ាស៊ីនធ្ងន់កំពុងមក'}},
+  {id:409,jobs:['construction'],cat:'work',  jp:'廃材を片付けてください',       read:'はいざいをかたづけてください',  t:{en:'Please clean up the waste material',vi:'Dọn dẹp phế liệu',id:'Bersihkan material sisa',zh:'清理废料',tl:'Linisin ang basura',my:'အပိုပစ္စည်းများကိုချပေးပါ',th:'เก็บเศษวัสดุ',ne:'फोहोर सामग्री सफा गर्नुस्',km:'សំអាតកាកសំណល់'}},
+  {id:410,jobs:['construction'],cat:'work',  jp:'図面を確認してください',       read:'ずめんをかくにんしてください',   t:{en:'Please check the drawing',vi:'Kiểm tra bản vẽ',id:'Cek gambar teknik',zh:'检查图纸',tl:'I-check ang drawing',my:'ပုံကြမ်းစစ်ပေးပါ',th:'ตรวจแบบ',ne:'ड्रइङ जाँच गर्नुस्',km:'ពិនិត្យប្លង់'}},
+
+  /* ══════════════════════
+     医療・福祉（介護）
+  ══════════════════════ */
+  {id:500,jobs:['care'],cat:'work',jp:'体を起こしましょう',                     read:'からだをおこしましょう',         t:{en:"Let's sit you up",vi:'Hãy ngồi dậy',id:'Mari duduk',zh:'让我们坐起来',tl:"Tayo'y umupo",my:'ထိုင်ကြမည်',th:'ลุกนั่งกัน',ne:'उठेर बस्नुस् है',km:'ក្រោកអង្គុយ'}},
+  {id:501,jobs:['care'],cat:'work',jp:'薬の時間です',                           read:'くすりのじかんです',             t:{en:"It's time for your medicine",vi:'Đến giờ uống thuốc',id:'Waktunya minum obat',zh:'该吃药了',tl:'Oras na ng gamot',my:'ဆေးသောက်ချိန်ရောက်ပြီ',th:'ถึงเวลากินยา',ne:'औषधी खाने समय भयो',km:'ដល់ពេលញ៉ាំថ្នាំ'}},
+  {id:502,jobs:['care'],cat:'work',jp:'食事の時間です',                         read:'しょくじのじかんです',           t:{en:"It's mealtime",vi:'Đến giờ ăn',id:'Waktunya makan',zh:'吃饭时间到了',tl:'Oras na ng kain',my:'ထမင်းစားချိန်ရောက်ပြီ',th:'ถึงเวลาอาหาร',ne:'खाना खाने समय भयो',km:'ដល់ពេលញ៉ាំបាយ'}},
+  {id:503,jobs:['care'],cat:'work',jp:'着替えを手伝います',                     read:'きがえをてつだいます',           t:{en:"I'll help you change clothes",vi:'Tôi giúp thay quần áo',id:'Saya bantu ganti baju',zh:'我来帮您换衣服',tl:'Tutulungan kita magbihis',my:'အဝတ်လဲပေးမည်',th:'ช่วยเปลี่ยนเสื้อผ้า',ne:'लुगा फेर्न मद्दत गर्छु',km:'ខ្ញុំជួយ着替え替换衣服'}},
+  {id:504,jobs:['care'],cat:'work',jp:'トイレに行きたいですか？',               read:'トイレにいきたいですか？',       t:{en:'Do you want to go to the toilet?',vi:'Bạn muốn đi vệ sinh không?',id:'Mau ke toilet?',zh:'您想去厕所吗？',tl:'Gusto mo bang pumunta sa CR?',my:'အိမ်သာသွားချင်လား？',th:'อยากเข้าห้องน้ำไหม?',ne:'शौचालय जान चाहनुहुन्छ?',km:'ចង់ទៅបង្គន់ទេ?'}},
+  {id:505,jobs:['care'],cat:'work',jp:'お風呂に入りましょう',                   read:'おふろにはいりましょう',         t:{en:"Let's take a bath",vi:'Hãy tắm',id:'Ayo mandi',zh:'我们去洗澡吧',tl:"Maligo na tayo",my:'ရေချိုးကြမည်',th:'มาอาบน้ำกัน',ne:'नुहाउनुस् है',km:'ងូតទឹក'}},
+  {id:506,jobs:['care'],cat:'work',jp:'血圧を測ります',                         read:'けつあつをはかります',           t:{en:'I will check your blood pressure',vi:'Tôi đo huyết áp',id:'Saya akan mengukur tekanan darah',zh:'我来量血压',tl:'Sukatin ko ang blood pressure mo',my:'သွေးဖိအားတိုင်းမည်',th:'วัดความดันโลหิต',ne:'रक्तचाप नाप्छु',km:'វាស់សម្ពាធឈាម'}},
+  {id:507,jobs:['care'],cat:'work',jp:'痛いところはありますか？',               read:'いたいところはありますか？',     t:{en:'Does anywhere hurt?',vi:'Có chỗ nào đau không?',id:'Ada bagian yang sakit?',zh:'有哪里疼吗？',tl:'May masakit ba?',my:'နာသောနေရာရှိလား？',th:'มีที่ไหนเจ็บไหม?',ne:'कतै दुखेको छ?',km:'មានកន្លែងណាឈឺទេ?'}},
+  {id:508,jobs:['care'],cat:'safety',jp:'転ばないように気をつけてください',     read:'ころばないようにきをつけてください',t:{en:'Please be careful not to fall',vi:'Cẩn thận đừng ngã',id:'Hati-hati jangan sampai jatuh',zh:'请小心不要跌倒',tl:'Mag-ingat na huwag mabuwal',my:'မကျဘဲသတိထားပေးပါ',th:'ระวังล้ม',ne:'नलड्ने गरी सावधान',km:'ប្រយ័ត្នដើម្បីកុំឱ្យដួល'}},
+  {id:509,jobs:['care'],cat:'work',jp:'ゆっくり歩いてください',                 read:'ゆっくりあるいてください',       t:{en:'Please walk slowly',vi:'Đi chậm thôi',id:'Jalan pelan-pelan',zh:'请慢慢走',tl:'Maglakad nang dahan-dahan',my:'တဖြည်းဖြည်းလမ်းလျှောက်ပေးပါ',th:'เดินช้าๆ',ne:'बिस्तारै हिँड्नुस्',km:'ដើរយឺតៗ'}},
+  {id:510,jobs:['care'],cat:'work',jp:'手を洗ってください',                     read:'てをあらってください',           t:{en:'Please wash your hands',vi:'Rửa tay',id:'Cuci tangan',zh:'请洗手',tl:'Hugasan ang mga kamay',my:'လက်ဆေးပေးပါ',th:'ล้างมือ',ne:'हात धुनुस्',km:'លាងដៃ'}},
+
+  /* ══════════════════════
+     農業・漁業
+  ══════════════════════ */
+  {id:600,jobs:['agriculture'],cat:'work',  jp:'ここを収穫してください',         read:'ここをしゅうかくしてください',   t:{en:'Please harvest here',vi:'Thu hoạch ở đây',id:'Panen di sini',zh:'请在这里收割',tl:'Mag-ani dito',my:'ဒီမှာသီးနှံကောက်ပေးပါ',th:'เก็บเกี่ยวที่นี่',ne:'यहाँ फसल काट्नुस्',km:'ប្រមូលផ្ដុំទីនេះ'}},
+  {id:601,jobs:['agriculture'],cat:'work',  jp:'種をまいてください',             read:'たねをまいてください',           t:{en:'Please sow the seeds',vi:'Gieo hạt giống',id:'Semai benih',zh:'播种',tl:'Magtanim ng binhi',my:'မျိုးစေ့ကျဲပေးပါ',th:'หว่านเมล็ด',ne:'बीज छर्नुस्',km:'ដាំគ្រាប់ពូជ'}},
+  {id:602,jobs:['agriculture'],cat:'work',  jp:'水をやってください',             read:'みずをやってください',           t:{en:'Please water the plants',vi:'Tưới nước',id:'Siram tanaman',zh:'请浇水',tl:'Diligan ang halaman',my:'ရေလောင်းပေးပါ',th:'รดน้ำ',ne:'पानी दिनुस्',km:'ស្រោចទឹក'}},
+  {id:603,jobs:['agriculture'],cat:'work',  jp:'農薬を散布してください',         read:'のうやくをさんぷしてください',   t:{en:'Please spray pesticide',vi:'Phun thuốc trừ sâu',id:'Semprotkan pestisida',zh:'喷洒农药',tl:'I-spray ang pesticide',my:'ပိုးသတ်ဆေးဖျန်းပေးပါ',th:'ฉีดยาฆ่าแมลง',ne:'कीटनाशक छर्नुस्',km:'បាញ់ថ្នាំកសិ'}},
+  {id:604,jobs:['agriculture'],cat:'work',  jp:'草を取ってください',             read:'くさをとってください',           t:{en:'Please remove the weeds',vi:'Nhổ cỏ',id:'Cabut rumput',zh:'请除草',tl:'Alisin ang damo',my:'မြက်ကောင်းဖယ်ပေးပါ',th:'ถอนหญ้า',ne:'झार उखेल्नुस्',km:'ដកស្មៅ'}},
+  {id:605,jobs:['agriculture'],cat:'work',  jp:'箱に入れてください',             read:'はこにいれてください',           t:{en:'Please put it in the box',vi:'Cho vào thùng',id:'Masukkan ke kotak',zh:'放进箱子',tl:'Ilagay sa kahon',my:'ဘောက်စ်ထဲထည့်ပေးပါ',th:'ใส่กล่อง',ne:'बाकसमा हाल्नुस्',km:'ដាក់ក្នុងប្រអប់'}},
+  {id:606,jobs:['agriculture'],cat:'safety',jp:'熱中症に気をつけてください',    read:'ねっちゅうしょうにきをつけてください',t:{en:'Be careful of heatstroke',vi:'Cẩn thận say nắng',id:'Hati-hati kena heatstroke',zh:'注意中暑',tl:'Mag-ingat sa heat stroke',my:'နေပူဒဏ်သတိထားပေးပါ',th:'ระวังฮีทสโตรก',ne:'लूको सावधान',km:'ប្រយ័ត្នកំដៅ'}},
+  {id:607,jobs:['agriculture'],cat:'safety',jp:'農機具に気をつけてください',    read:'のうきぐにきをつけてください',   t:{en:'Be careful with farm equipment',vi:'Cẩn thận máy nông nghiệp',id:'Hati-hati alat pertanian',zh:'注意农机具',tl:'Mag-ingat sa farm equipment',my:'စိုက်ပျိုးရေးကိရိယာကိုသတိထားပေးပါ',th:'ระวังเครื่องมือเกษตร',ne:'कृषि उपकरणमा सावधान',km:'ប្រយ័ត្នឧបករណ៍កសិ'}},
+  {id:608,jobs:['agriculture'],cat:'work',  jp:'仕分けをしてください',           read:'しわけをしてください',           t:{en:'Please sort them',vi:'Phân loại',id:'Sortir',zh:'请分类',tl:'I-sort',my:'စီခွဲပေးပါ',th:'คัดแยก',ne:'छान्नुस्',km:'ចែកប្រភេទ'}},
+  {id:609,jobs:['agriculture'],cat:'work',  jp:'網を確認してください',           read:'あみをかくにんしてください',     t:{en:'Please check the net',vi:'Kiểm tra lưới',id:'Cek jaring',zh:'检查网',tl:'I-check ang net',my:'ကွန်စစ်ပေးပါ',th:'ตรวจสอบตาข่าย',ne:'जाल जाँच गर्नुस्',km:'ពិនិត្យអន្ទាញ'}},
 ];
 
 const EMERG = [
-  {badge:'危険', jp:'危ない！止まれ！',  t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
-  {badge:'緊急', jp:'助けてください！',  t:{en:'Help me!',vi:'Giúp tôi!',id:'Tolong!',zh:'救命！',tl:'Saklolo!',my:'ကူညီပါ!',th:'ช่วยด้วย!',ne:'मद्दत!',km:'ជួយខ្ញុំ!'}},
-  {badge:'怪我', jp:'怪我をしました',    t:{en:'I am injured',vi:'Tôi bị thương',id:'Saya terluka',zh:'我受伤了',tl:'Nasugatan ako',my:'ဒဏ်ရာရသည်',th:'ฉันบาดเจ็บ',ne:'म चोटिएको छु',km:'ខ្ញុំរបួស'}},
-  {badge:'火災', jp:'火事です！',        t:{en:'Fire!',vi:'Cháy!',id:'Kebakaran!',zh:'着火了！',tl:'Sunog!',my:'မီးလောင်!',th:'ไฟไหม้!',ne:'आगो!',km:'ភ្លើងឆេះ!'}},
-  {badge:'',     jp:'気分が悪いです',    t:{en:"I don't feel well",vi:'Tôi không khỏe',id:'Saya tidak enak badan',zh:'我不舒服',tl:'Hindi ako maayos',my:'မကောင်းပါ',th:'ไม่สบาย',ne:'मलाई राम्रो लागेन',km:'ខ្ញុំមិនស្រួល'}},
-  {badge:'',     jp:'電話してください',  t:{en:'Please call someone',vi:'Gọi điện đi',id:'Tolong telepon',zh:'请打电话',tl:'Tumawag',my:'ဖုန်းခေါ်ပေးပါ',th:'โทรหาคน',ne:'फोन गर्नुस्',km:'ជួយទូរស័ព្ទ'}},
+  {badge:'危険',jp:'危ない！止まれ！',  t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
+  {badge:'緊急',jp:'助けてください！',  t:{en:'Help me!',vi:'Giúp tôi!',id:'Tolong!',zh:'救命！',tl:'Saklolo!',my:'ကူညီပါ!',th:'ช่วยด้วย!',ne:'मद्दत!',km:'ជួយខ្ញុំ!'}},
+  {badge:'怪我',jp:'怪我をしました',    t:{en:'I am injured',vi:'Tôi bị thương',id:'Saya terluka',zh:'我受伤了',tl:'Nasugatan ako',my:'ဒဏ်ရာရသည်',th:'ฉันบาดเจ็บ',ne:'म चोटिएको छु',km:'ខ្ញុំរបួស'}},
+  {badge:'火災',jp:'火事です！',        t:{en:'Fire!',vi:'Cháy!',id:'Kebakaran!',zh:'着火了！',tl:'Sunog!',my:'မီးလောင်!',th:'ไฟไหม้!',ne:'आगो!',km:'ភ្លើងឆេះ!'}},
+  {badge:'',    jp:'気分が悪いです',    t:{en:"I don't feel well",vi:'Tôi không khỏe',id:'Saya tidak enak badan',zh:'我不舒服',tl:'Hindi ako maayos',my:'မကောင်းပါ',th:'ไม่สบาย',ne:'मलाई राम्रो लागेन',km:'ខ្ញុំមិនស្រួល'}},
+  {badge:'',    jp:'電話してください',  t:{en:'Please call someone',vi:'Gọi điện đi',id:'Tolong telepon',zh:'请打电话',tl:'Tumawag',my:'ဖုန်းခေါ်ပေးပါ',th:'โทรหาคน',ne:'फोन गर्नुस्',km:'ជួយទូរស័ព្ទ'}},
 ];
 
-/* ══════════════════════════════
-   STATE
-══════════════════════════════ */
-let selectedJob    = localStorage.getItem('genba-job') || '';
-let activeLangs    = JSON.parse(localStorage.getItem('genba-langs') || '[]');
-let currentLang    = localStorage.getItem('genba-current') || '';
-let cat            = 'all';
-let selectedCard   = null;
-let addCat         = 'work';
-let translateLang  = '';
-let customPhrases  = JSON.parse(localStorage.getItem('genba-custom') || '[]');
-let nextCustomId   = parseInt(localStorage.getItem('genba-next-id') || '1000');
+// カテゴリー定義（職種ごとに使うものだけ動的表示）
+const CAT_DEFS = [
+  {id:'all',    label:'すべて'},
+  {id:'basic',  label:'基本'},
+  {id:'work',   label:'作業指示'},
+  {id:'safety', label:'安全'},
+  {id:'quality',label:'品質確認'},
+  {id:'tools',  label:'工具'},
+  {id:'reply',  label:'返答'},
+];
 
-// Setup wizard state
-let setupStep      = 1; // 1=job, 2=lang
-let setupJob       = '';
-let setupLangs     = new Set();
+/* ══ STATE ══ */
+let selectedJob   = localStorage.getItem('genba-job')     || '';
+let activeLangs   = JSON.parse(localStorage.getItem('genba-langs')   || '[]');
+let currentLang   = localStorage.getItem('genba-current') || '';
+let cat           = 'all';
+let selectedCard  = null;
+let addCat        = 'work';
+let tlLang        = '';
+let customPhrases = JSON.parse(localStorage.getItem('genba-custom')  || '[]');
+let nextId        = parseInt(localStorage.getItem('genba-next-id')   || '1000');
+let setupStep     = 1;
+let setupJob      = '';
+let setupLangs    = new Set();
 
-/* ══════════════════════════════
-   SETUP WIZARD
-══════════════════════════════ */
-function renderSetupStep1() {
+/* ══ SETUP ══ */
+function renderStep1() {
   setupStep = 1;
-  document.getElementById('dot-1').className = 'setup-step-dot active';
-  document.getElementById('dot-2').className = 'setup-step-dot';
-  document.getElementById('setup-step-label').textContent = 'STEP 1 / 2';
-  document.getElementById('setup-title').textContent = '職種を選んでください';
-  document.getElementById('setup-sub').textContent = 'Job Category — あなたの現場はどれですか？';
-  document.getElementById('setup-next').textContent = '次へ →';
-  document.getElementById('setup-next').disabled = !setupJob;
-  document.getElementById('setup-back').style.display = 'none';
-
-  document.getElementById('setup-body').innerHTML = `
-    <div class="setup-grid">
-      ${JOBS.map(j => `
-        <button class="setup-card${setupJob===j.id?' selected':''}" onclick="selectJob('${j.id}')">
-          <span class="sc-icon">${j.icon}</span>
-          <span class="sc-name">${j.name}</span>
-          <span class="sc-sub">${j.sub}</span>
-        </button>`).join('')}
-    </div>`;
+  document.getElementById('dot1').className = 'sdot active';
+  document.getElementById('dot2').className = 'sdot';
+  document.getElementById('slbl').textContent  = 'STEP 1 / 2';
+  document.getElementById('stitle').textContent = '職種を選んでください';
+  document.getElementById('ssub').textContent   = 'Job Category — あなたの現場はどれですか？';
+  document.getElementById('snext').textContent  = '次へ →';
+  document.getElementById('snext').disabled     = !setupJob;
+  document.getElementById('sback').style.display = 'none';
+  document.getElementById('sbody').innerHTML = `<div class="setup-grid">${
+    JOBS.map(j=>`<button class="scard${setupJob===j.id?' selected':''}" onclick="selJob('${j.id}',this)">
+      <span class="si">${j.icon}</span><span class="sn">${j.name}</span><span class="ss">${j.sub}</span>
+    </button>`).join('')}</div>`;
 }
 
-function renderSetupStep2() {
+function renderStep2() {
   setupStep = 2;
-  document.getElementById('dot-1').className = 'setup-step-dot done';
-  document.getElementById('dot-2').className = 'setup-step-dot active';
-  document.getElementById('setup-step-label').textContent = 'STEP 2 / 2';
-  document.getElementById('setup-title').textContent = '言語を選んでください';
-  document.getElementById('setup-sub').textContent = 'Language — 複数選択できます（後で変更可）';
-  document.getElementById('setup-next').textContent = 'はじめる ✓';
-  document.getElementById('setup-next').disabled = setupLangs.size === 0;
-  document.getElementById('setup-back').style.display = 'block';
-
-  document.getElementById('setup-body').innerHTML = `
-    <div class="setup-grid">
-      ${Object.entries(ALL_LANGS).map(([code, L]) => `
-        <button class="setup-card${setupLangs.has(code)?' selected':''}" onclick="toggleLang('${code}')">
-          <span class="sc-icon">${L.flag}</span>
-          <span class="sc-name">${L.name}</span>
-          <span class="sc-sub">${code.toUpperCase()}</span>
-        </button>`).join('')}
-    </div>`;
+  document.getElementById('dot1').className = 'sdot done';
+  document.getElementById('dot2').className = 'sdot active';
+  document.getElementById('slbl').textContent  = 'STEP 2 / 2';
+  document.getElementById('stitle').textContent = '言語を選んでください';
+  document.getElementById('ssub').textContent   = 'Language — 複数選択できます';
+  document.getElementById('snext').textContent  = 'はじめる ✓';
+  document.getElementById('snext').disabled     = setupLangs.size === 0;
+  document.getElementById('sback').style.display = 'block';
+  document.getElementById('sbody').innerHTML = `<div class="setup-grid">${
+    Object.entries(ALL_LANGS).map(([c,L])=>`<button class="scard${setupLangs.has(c)?' selected':''}" onclick="togLang('${c}')">
+      <span class="si">${L.flag}</span><span class="sn">${L.name}</span><span class="ss">${c.toUpperCase()}</span>
+    </button>`).join('')}</div>`;
 }
 
-function selectJob(id) {
+function selJob(id, el) {
   setupJob = id;
-  document.querySelectorAll('.setup-card').forEach(el => el.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-  document.getElementById('setup-next').disabled = false;
+  document.querySelectorAll('.scard').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('snext').disabled = false;
 }
-
-function toggleLang(code) {
-  if (setupLangs.has(code)) setupLangs.delete(code);
-  else setupLangs.add(code);
-  renderSetupStep2();
+function togLang(c) {
+  setupLangs.has(c) ? setupLangs.delete(c) : setupLangs.add(c);
+  renderStep2();
 }
-
 function setupNext() {
-  if (setupStep === 1) {
-    if (!setupJob) return;
-    renderSetupStep2();
-  } else {
-    if (setupLangs.size === 0) return;
-    // Save
-    selectedJob  = setupJob;
-    activeLangs  = [...setupLangs];
-    currentLang  = activeLangs[0];
-    localStorage.setItem('genba-job',     selectedJob);
-    localStorage.setItem('genba-langs',   JSON.stringify(activeLangs));
+  if (setupStep===1) { if(setupJob) renderStep2(); }
+  else {
+    if (setupLangs.size===0) return;
+    selectedJob = setupJob; activeLangs = [...setupLangs]; currentLang = activeLangs[0];
+    localStorage.setItem('genba-job', selectedJob);
+    localStorage.setItem('genba-langs', JSON.stringify(activeLangs));
     localStorage.setItem('genba-current', currentLang);
     document.getElementById('setup').classList.add('hidden');
     renderAll();
   }
 }
-
-function setupBack() {
-  renderSetupStep1();
-}
-
+function setupBack() { renderStep1(); }
 function showSetup() {
-  setupJob   = selectedJob;
-  setupLangs = new Set(activeLangs);
-  setupStep  = 1;
-  renderSetupStep1();
+  setupJob = selectedJob; setupLangs = new Set(activeLangs); renderStep1();
   document.getElementById('setup').classList.remove('hidden');
 }
 
-/* ══════════════════════════════
-   HELPERS
-══════════════════════════════ */
-function tl(p) {
-  if (p.t) return p.t[currentLang] || p.t.en || '';
-  return p.tl || '';
-}
-function bcp() { return ALL_LANGS[currentLang]?.bcp || 'en-US'; }
-function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+/* ══ HELPERS ══ */
+function T(p){ return p.t?(p.t[currentLang]||p.t.en||''):(p.tl||''); }
+function BCP(){ return ALL_LANGS[currentLang]?.bcp||'en-US'; }
+function esc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function speak(txt,lng){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt); u.lang=lng||'ja-JP'; u.rate=0.85; speechSynthesis.speak(u); }
+function jobMatch(p){ return p.jobs==='all'||(Array.isArray(p.jobs)&&p.jobs.includes(selectedJob)); }
 
-function speak(text, lang) {
-  if (!window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang || 'ja-JP'; u.rate = 0.85;
-  speechSynthesis.speak(u);
-}
-
-function phraseMatchesJob(p) {
-  if (p.jobs === 'all') return true;
-  if (Array.isArray(p.jobs)) return p.jobs.includes(selectedJob);
-  return true;
-}
-
-/* ══════════════════════════════
-   HEADER / LANG SWITCHER
-══════════════════════════════ */
+/* ══ HEADER ══ */
 function renderHeader() {
-  const job = JOBS.find(j => j.id === selectedJob);
-  document.getElementById('job-chip').textContent = job ? job.icon + ' ' + job.name : '';
-  renderSwitcher();
-}
-
-function renderSwitcher() {
-  document.getElementById('lang-switcher').innerHTML = activeLangs.map(code => {
-    const L = ALL_LANGS[code];
-    return `<button class="lsw-btn${code===currentLang?' active':''}" onclick="switchLang('${code}')">
-      <span class="lf">${L.flag}</span>${L.name}
-    </button>`;
+  const j = JOBS.find(x=>x.id===selectedJob);
+  document.getElementById('job-chip').textContent = j?j.icon+' '+j.name:'';
+  document.getElementById('lang-sw').innerHTML = activeLangs.map(c=>{
+    const L=ALL_LANGS[c];
+    return `<button class="lbtn${c===currentLang?' active':''}" onclick="switchLang('${c}')"><span class="lf">${L.flag}</span>${L.name}</button>`;
   }).join('');
 }
+function switchLang(c){ currentLang=c; localStorage.setItem('genba-current',c); renderHeader(); renderPhrases(); renderEmerg(); }
 
-function switchLang(code) {
-  currentLang = code;
-  localStorage.setItem('genba-current', code);
-  renderSwitcher();
-  renderPhrases();
-  renderEmerg();
+/* ══ CATEGORIES（職種で使うものだけ表示）══ */
+function getActiveCats() {
+  const all = [...PHRASES,...customPhrases].filter(jobMatch);
+  const used = new Set(all.map(p=>p.cat));
+  return CAT_DEFS.filter(c=>c.id==='all'||used.has(c.id));
 }
-
-/* ══════════════════════════════
-   CATEGORIES
-══════════════════════════════ */
 function renderCats() {
-  document.getElementById('cats').innerHTML = CATS_DEF.map(c =>
-    `<button class="cat-btn${c.id===cat?' active':''}" onclick="setCat('${c.id}')">${c.label}</button>`
+  const active = getActiveCats();
+  // catが存在しないカテゴリなら'all'にリセット
+  if (!active.find(c=>c.id===cat)) cat='all';
+  document.getElementById('cats').innerHTML = active.map(c=>
+    `<button class="cbt${c.id===cat?' active':''}" onclick="setCat('${c.id}')">${c.label}</button>`
   ).join('');
 }
+function setCat(id){ cat=id; selectedCard=null; renderCats(); renderPhrases(); }
 
-function setCat(id) { cat = id; selectedCard = null; renderCats(); renderPhrases(); }
-
-/* ══════════════════════════════
-   PHRASE LIST
-══════════════════════════════ */
+/* ══ PHRASES ══ */
 function renderPhrases() {
-  const job = JOBS.find(j => j.id === selectedJob);
-  let list = [...PHRASES, ...customPhrases].filter(p => {
-    const catMatch = cat === 'all' || p.cat === cat;
-    const jobMatch = phraseMatchesJob(p);
-    return catMatch && jobMatch;
-  });
-
-  // Job-specific phrases banner
-  const jobSpecific = list.filter(p => p.jobs !== 'all' && Array.isArray(p.jobs));
-  const bannerHTML = jobSpecific.length > 0 && cat === 'all' ? `
-    <div class="job-banner">
-      <span class="job-banner-icon">${job?.icon||'💼'}</span>
-      <div>
-        <div class="job-banner-text">${job?.name||''}専用フレーズを表示中</div>
-        <div class="job-banner-sub">${jobSpecific.length}件の専用フレーズが含まれています</div>
-      </div>
-    </div>` : '';
-
-  if (list.length === 0) {
-    document.getElementById('phrase-list').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-text">このカテゴリーにフレーズがありません</div>
-      </div>`;
+  const list = [...PHRASES,...customPhrases].filter(p=>jobMatch(p)&&(cat==='all'||p.cat===cat));
+  if (!list.length) {
+    document.getElementById('phrase-list').innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div>フレーズがありません</div></div>`;
     return;
   }
-
-  document.getElementById('phrase-list').innerHTML = bannerHTML + list.map(p => {
-    const tlText = tl(p);
-    const isJobSpecific = Array.isArray(p.jobs) && p.jobs.length > 0;
-    return `<div class="pcard${selectedCard===p.id?' selected':''}" id="pc-${p.id}" onclick="selectCard(${p.id})">
-      ${isJobSpecific && !p.custom ? `<span class="pcard-job-tag">${job?.icon||''} ${job?.name||''}</span>` : ''}
-      ${p.custom ? `<span class="pcard-job-tag">カスタム</span>` : ''}
+  document.getElementById('phrase-list').innerHTML = list.map(p=>{
+    const tlTxt = T(p);
+    return `<div class="pcard${selectedCard===p.id?' selected':''}" id="pc-${p.id}" onclick="selCard(${p.id})">
       <div class="pcard-jp">${p.jp}</div>
       <div class="pcard-read">${p.read||''}</div>
       <div class="pcard-divider"></div>
-      <div class="pcard-tl">${tlText}</div>
+      <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
         <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speak('${esc(p.jp)}','ja-JP')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speak('${esc(tlText)}','${bcp()}')">🔊 ${ALL_LANGS[currentLang]?.name||'EN'}</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speak('${esc(tlTxt)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||'EN'}</button>
       </div>
     </div>`;
   }).join('');
 }
-
-function selectCard(id) {
-  const allPhrases = [...PHRASES, ...customPhrases];
-  const p = allPhrases.find(x => x.id === id); if (!p) return;
-  if (selectedCard === id) {
-    selectedCard = null;
-    document.getElementById('pc-'+id)?.classList.remove('selected');
-    return;
-  }
-  if (selectedCard) document.getElementById('pc-'+selectedCard)?.classList.remove('selected');
-  selectedCard = id;
-  document.getElementById('pc-'+id)?.classList.add('selected');
-  const tlText = tl(p);
-  speechSynthesis.cancel();
-  const ujp = new SpeechSynthesisUtterance(p.jp); ujp.lang='ja-JP'; ujp.rate=0.85;
-  const utl = new SpeechSynthesisUtterance(tlText); utl.lang=bcp(); utl.rate=0.85;
-  ujp.onend = () => setTimeout(() => speechSynthesis.speak(utl), 300);
-  speechSynthesis.speak(ujp);
+function selCard(id){
+  const p=[...PHRASES,...customPhrases].find(x=>x.id===id); if(!p)return;
+  if(selectedCard===id){ selectedCard=null; document.getElementById('pc-'+id)?.classList.remove('selected'); return; }
+  if(selectedCard) document.getElementById('pc-'+selectedCard)?.classList.remove('selected');
+  selectedCard=id; document.getElementById('pc-'+id)?.classList.add('selected');
+  const tlTxt=T(p); speechSynthesis.cancel();
+  const uj=new SpeechSynthesisUtterance(p.jp); uj.lang='ja-JP'; uj.rate=0.85;
+  const ut=new SpeechSynthesisUtterance(tlTxt); ut.lang=BCP(); ut.rate=0.85;
+  uj.onend=()=>setTimeout(()=>speechSynthesis.speak(ut),300);
+  speechSynthesis.speak(uj);
 }
 
-/* ══════════════════════════════
-   EMERGENCY
-══════════════════════════════ */
-function renderEmerg() {
-  document.getElementById('emerg-list').innerHTML = EMERG.map(e => {
-    const tlText = e.t[currentLang] || e.t.en;
+/* ══ EMERGENCY ══ */
+function renderEmerg(){
+  document.getElementById('emerg-list').innerHTML=EMERG.map(e=>{
+    const tl=e.t[currentLang]||e.t.en;
     return `<div class="ecard">
       ${e.badge?`<div class="ebadge">${e.badge}</div>`:''}
-      <div class="ecard-jp">${e.jp}</div>
-      <div class="ecard-tl">${tlText}</div>
+      <div class="ecard-jp">${e.jp}</div><div class="ecard-tl">${tl}</div>
       <div class="ecard-btns">
         <button class="ebtn ebtn-jp" onclick="speak('${esc(e.jp)}','ja-JP')">🔊 日本語</button>
-        <button class="ebtn ebtn-tl" onclick="speak('${esc(tlText)}','${bcp()}')">🔊 ${ALL_LANGS[currentLang]?.name||'EN'}</button>
-      </div>
-    </div>`;
+        <button class="ebtn ebtn-tl" onclick="speak('${esc(tl)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||'EN'}</button>
+      </div></div>`;
   }).join('');
 }
 
-/* ══════════════════════════════
-   ADD PHRASE + AUTO TRANSLATE
-══════════════════════════════ */
-function renderLangTranslateRow() {
-  if (!translateLang && activeLangs.length > 0) translateLang = currentLang || activeLangs[0];
-  const row = document.getElementById('lang-translate-row'); if (!row) return;
-  row.innerHTML = activeLangs.map(code => {
-    const L = ALL_LANGS[code];
-    return `<button class="ltag${translateLang===code?' active':''}" onclick="setTranslateLang('${code}')">${L.flag} ${L.name}</button>`;
-  }).join('');
+/* ══ ADD ══ */
+function renderLtagRow(){
+  if(!tlLang&&activeLangs.length) tlLang=currentLang||activeLangs[0];
+  const r=document.getElementById('ltag-row'); if(!r)return;
+  r.innerHTML=activeLangs.map(c=>{const L=ALL_LANGS[c];return`<button class="ltag${tlLang===c?' active':''}" onclick="setTlLang('${c}')">${L.flag} ${L.name}</button>`;}).join('');
 }
-
-function setTranslateLang(code) { translateLang = code; renderLangTranslateRow(); checkTranslateReady(); }
-
-function onJpInput() {
-  checkTranslateReady();
-  document.getElementById('translate-status').className = 'translate-status';
-  document.getElementById('translate-status').textContent = '';
+function setTlLang(c){ tlLang=c; renderLtagRow(); chkTr(); }
+function onJpInput(){ chkTr(); document.getElementById('tr-st').className='tr-st'; }
+function chkTr(){ const jp=document.getElementById('add-jp').value.trim(); const b=document.getElementById('tr-btn'); if(b)b.disabled=!(jp&&tlLang); }
+async function autoTranslate(){
+  const jp=document.getElementById('add-jp').value.trim(); if(!jp||!tlLang)return;
+  const btn=document.getElementById('tr-btn'),st=document.getElementById('tr-st'),L=ALL_LANGS[tlLang];
+  btn.disabled=true; btn.textContent='🌐 翻訳中...';
+  st.className='tr-st loading'; st.textContent=`${L.flag} ${L.name}に翻訳しています...`;
+  const lm={en:'en-US',vi:'vi-VN',id:'id-ID',zh:'zh-CN',tl:'tl-PH',my:'my-MM',th:'th-TH',ne:'ne-NP',km:'km-KH'};
+  try{
+    const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(jp)}&langpair=ja|${lm[tlLang]||tlLang}`);
+    const d=await r.json();
+    if(d.responseStatus===200&&d.responseData?.translatedText){
+      document.getElementById('add-tl').value=d.responseData.translatedText;
+      st.className='tr-st success'; st.textContent=`✓ ${L.flag} 翻訳完了 — 確認・修正してください`;
+    } else throw 0;
+  } catch{ st.className='tr-st error'; st.textContent='⚠ 翻訳できませんでした。手動で入力してください。'; }
+  finally{ btn.disabled=false; btn.innerHTML='🌐 自動翻訳する'; }
 }
-
-function checkTranslateReady() {
-  const jp = document.getElementById('add-jp').value.trim();
-  const btn = document.getElementById('translate-btn');
-  if (btn) btn.disabled = !(jp && translateLang);
+function renderAddCatRow(){
+  // 現在の職種で使うカテゴリーのみ
+  const activeCatIds = new Set(getActiveCats().map(c=>c.id));
+  document.getElementById('add-cat-row').innerHTML = CAT_DEFS
+    .filter(c=>c.id!=='all'&&activeCatIds.has(c.id))
+    .map(c=>`<button class="acat${addCat===c.id?' selected':''}" onclick="setAddCat('${c.id}')">${c.label}</button>`).join('');
 }
-
-async function autoTranslate() {
-  const jp = document.getElementById('add-jp').value.trim();
-  if (!jp || !translateLang) return;
-  const btn = document.getElementById('translate-btn');
-  const status = document.getElementById('translate-status');
-  const L = ALL_LANGS[translateLang];
-  btn.disabled = true; btn.textContent = '🌐 翻訳中...';
-  status.className = 'translate-status loading';
-  status.textContent = `${L.flag} ${L.name}に翻訳しています...`;
-  const langMap = {en:'en-US',vi:'vi-VN',id:'id-ID',zh:'zh-CN',tl:'tl-PH',my:'my-MM',th:'th-TH',ne:'ne-NP',km:'km-KH'};
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(jp)}&langpair=ja|${langMap[translateLang]||translateLang}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.responseStatus === 200 && data.responseData?.translatedText) {
-      document.getElementById('add-tl').value = data.responseData.translatedText;
-      status.className = 'translate-status success';
-      status.textContent = `✓ ${L.flag} 翻訳完了 — 内容を確認・修正してください`;
-    } else throw new Error();
-  } catch {
-    status.className = 'translate-status error';
-    status.textContent = '⚠ 翻訳できませんでした。手動で入力してください。';
-  } finally {
-    btn.disabled = false; btn.innerHTML = '🌐 自動翻訳する';
-  }
-}
-
-function renderAddCatRow() {
-  document.getElementById('add-cat-row').innerHTML = CATS_DEF.filter(c=>c.id!=='all').map(c=>
-    `<button class="add-cat-opt${addCat===c.id?' selected':''}" onclick="setAddCat('${c.id}')">${c.label}</button>`
-  ).join('');
-}
-
-function setAddCat(id) { addCat = id; renderAddCatRow(); }
-
-function savePhrase() {
-  const jp = document.getElementById('add-jp').value.trim();
-  const tlVal = document.getElementById('add-tl').value.trim();
-  if (!jp || !tlVal) { alert('日本語と外国語の両方を入力してください'); return; }
-  const p = { id:nextCustomId++, jobs:'all', cat:addCat, jp, read:'', tl:tlVal, custom:true };
+function setAddCat(id){ addCat=id; renderAddCatRow(); }
+function savePhrase(){
+  const jp=document.getElementById('add-jp').value.trim(), tl=document.getElementById('add-tl').value.trim();
+  if(!jp||!tl){alert('日本語と外国語の両方を入力してください');return;}
+  const p={id:nextId++,jobs:'all',cat:addCat,jp,read:'',tl,custom:true};
   customPhrases.push(p);
-  localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
-  localStorage.setItem('genba-next-id', String(nextCustomId));
-  document.getElementById('add-jp').value = '';
-  document.getElementById('add-tl').value = '';
-  document.getElementById('translate-status').className = 'translate-status';
-  renderCustomList(); renderPhrases();
+  localStorage.setItem('genba-custom',JSON.stringify(customPhrases));
+  localStorage.setItem('genba-next-id',String(nextId));
+  document.getElementById('add-jp').value=''; document.getElementById('add-tl').value='';
+  document.getElementById('tr-st').className='tr-st';
+  renderCustomList(); renderPhrases(); renderCats();
   alert('追加しました！');
 }
-
-function deleteCustom(id) {
-  customPhrases = customPhrases.filter(p => p.id !== id);
-  localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
-  renderCustomList(); renderPhrases();
+function deleteCustom(id){
+  customPhrases=customPhrases.filter(p=>p.id!==id);
+  localStorage.setItem('genba-custom',JSON.stringify(customPhrases));
+  renderCustomList(); renderPhrases(); renderCats();
 }
-
-function renderCustomList() {
-  const wrap = document.getElementById('custom-list'); if (!wrap) return;
-  if (customPhrases.length === 0) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = `<div class="add-label" style="margin-bottom:8px;">追加済みフレーズ</div>` +
-    customPhrases.map(p => `
-    <div class="custom-item">
-      <div><div class="custom-item-text">${p.jp}</div><div class="custom-item-tl">${p.tl}</div></div>
+function renderCustomList(){
+  const w=document.getElementById('custom-list'); if(!w)return;
+  if(!customPhrases.length){w.innerHTML='';return;}
+  w.innerHTML=`<div class="add-lbl" style="margin-bottom:8px;">追加済みフレーズ</div>`+
+    customPhrases.map(p=>`<div class="custom-item">
+      <div><div class="ci-text">${p.jp}</div><div class="ci-tl">${p.tl}</div></div>
       <button class="del-btn" onclick="deleteCustom(${p.id})">削除</button>
     </div>`).join('');
 }
 
-/* ══════════════════════════════
-   SCREEN SWITCH
-══════════════════════════════ */
-function switchScreen(name) {
-  ['main','emerg','add'].forEach(s => {
-    document.getElementById('screen-'+s).style.display = s===name ? 'flex' : 'none';
+/* ══ SCREEN ══ */
+function switchScreen(n){
+  ['main','emerg','add'].forEach(s=>{
+    document.getElementById('sc-'+s).style.display=s===n?'flex':'none';
+    document.getElementById('bn-'+s).classList.toggle('active',s===n);
   });
-  ['main','emerg','add'].forEach(s => {
-    document.getElementById('bn-'+s).classList.toggle('active', s===name);
-  });
-  if (name==='add') { renderAddCatRow(); renderCustomList(); renderLangTranslateRow(); checkTranslateReady(); }
+  if(n==='add'){renderAddCatRow();renderCustomList();renderLtagRow();chkTr();}
 }
 
-/* ══════════════════════════════
-   INIT
-══════════════════════════════ */
-function renderAll() {
-  renderHeader();
-  renderCats();
-  renderPhrases();
-  renderEmerg();
-}
+/* ══ INIT ══ */
+function renderAll(){ renderHeader(); renderCats(); renderPhrases(); renderEmerg(); }
 
-// 初回 or 設定済み
-if (selectedJob && activeLangs.length > 0 && currentLang) {
+if(selectedJob&&activeLangs.length>0&&currentLang){
   document.getElementById('setup').classList.add('hidden');
   renderAll();
 } else {
-  setupJob = selectedJob;
-  setupLangs = new Set(activeLangs);
-  renderSetupStep1();
+  setupJob=selectedJob; setupLangs=new Set(activeLangs); renderStep1();
 }
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
