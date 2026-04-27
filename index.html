@@ -12,74 +12,94 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-system,'Hiragino Sans','Noto Sans JP',sans-serif;}
-#app{max-width:430px;height:100vh;margin:0 auto;display:flex;flex-direction:column;background:#f2f4f7;overflow:hidden;}
+#app{max-width:430px;height:100vh;margin:0 auto;display:flex;flex-direction:column;background:#f2f4f7;overflow:hidden;position:relative;}
 
-/* SETUP */
-#setup{position:fixed;inset:0;z-index:500;background:#1a3a5c;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;}
+/* ══════════════════════════════
+   SETUP WIZARD
+══════════════════════════════ */
+#setup{position:fixed;inset:0;z-index:500;background:#1a3a5c;display:flex;flex-direction:column;overflow:hidden;}
 #setup.hidden{display:none;}
-.setup-title{color:#fff;font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;}
-.setup-sub{color:rgba(255,255,255,0.5);font-size:13px;text-align:center;margin-bottom:24px;line-height:1.6;}
-.setup-hint{color:rgba(255,255,255,0.35);font-size:11px;text-align:center;margin-top:16px;}
-.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:340px;}
-.setup-lang{padding:13px 10px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:4px;}
-.setup-lang:active{transform:scale(0.96);background:rgba(255,255,255,0.18);}
-.setup-lang.selected{border-color:#7ec8f0;background:rgba(126,200,240,0.2);}
-.setup-lang .sflag{font-size:26px;}
-.setup-lang .sname{font-size:11px;opacity:0.65;}
-.setup-done{margin-top:20px;padding:14px 40px;border-radius:14px;background:#fff;color:#1a3a5c;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:transform 0.15s;}
-.setup-done:active{transform:scale(0.97);}
-.setup-done:disabled{opacity:0.4;cursor:default;}
 
-/* HEADER */
+.setup-header{padding:max(env(safe-area-inset-top),16px) 20px 16px;flex-shrink:0;}
+.setup-progress{display:flex;gap:6px;margin-bottom:16px;}
+.setup-step-dot{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);transition:background 0.3s;}
+.setup-step-dot.done{background:#7ec8f0;}
+.setup-step-dot.active{background:#fff;}
+.setup-step-label{color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:0.5px;}
+.setup-title{color:#fff;font-size:20px;font-weight:700;margin-top:4px;}
+.setup-sub{color:rgba(255,255,255,0.55);font-size:13px;margin-top:4px;line-height:1.5;}
+
+.setup-body{flex:1;overflow-y:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch;}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.setup-card{padding:14px 10px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-family:inherit;text-align:center;transition:all 0.18s;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.setup-card:active{transform:scale(0.96);}
+.setup-card.selected{border-color:#7ec8f0;background:rgba(126,200,240,0.2);}
+.setup-card .sc-icon{font-size:28px;}
+.setup-card .sc-name{font-size:13px;font-weight:700;line-height:1.3;}
+.setup-card .sc-sub{font-size:10px;opacity:0.6;line-height:1.3;}
+.setup-card.selected .sc-sub{opacity:0.8;}
+
+.setup-footer{padding:12px 16px;padding-bottom:max(env(safe-area-inset-bottom),12px);flex-shrink:0;}
+.setup-next{width:100%;padding:14px;border-radius:14px;background:#fff;color:#1a3a5c;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.setup-next:disabled{opacity:0.3;cursor:default;}
+.setup-next:not(:disabled):active{transform:scale(0.98);}
+.setup-back{width:100%;padding:10px;border-radius:12px;background:transparent;color:rgba(255,255,255,0.5);font-size:14px;border:none;cursor:pointer;font-family:inherit;margin-top:8px;}
+
+/* ══════════════════════════════
+   HEADER
+══════════════════════════════ */
 .header{background:#1a3a5c;padding:10px 14px;padding-top:max(env(safe-area-inset-top),10px);flex-shrink:0;}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .app-name{color:#fff;font-size:17px;font-weight:700;}
-.header-actions{display:flex;gap:8px;}
-.hbtn{padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.75);font-size:12px;cursor:pointer;font-family:inherit;}
-
-/* LANG SWITCHER */
+.header-meta{display:flex;align-items:center;gap:6px;}
+.job-chip{background:rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,0.8);}
+.settings-btn{padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;font-family:inherit;}
 .lang-switcher{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
 .lang-switcher::-webkit-scrollbar{display:none;}
 .lsw-btn{flex:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.18s;}
 .lsw-btn.active{background:#fff;color:#1a3a5c;border-color:#fff;}
-.lsw-btn .lf{font-size:16px;}
-.lsw-add{flex:none;padding:5px 12px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;font-family:inherit;}
+.lsw-btn .lf{font-size:15px;}
 
-/* CATEGORIES */
+/* ══════════════════════════════
+   CATEGORIES
+══════════════════════════════ */
 .cats{display:flex;background:#fff;border-bottom:1px solid #e0e6ef;flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
 .cats::-webkit-scrollbar{display:none;}
-.cat-btn{flex:none;padding:10px 15px;font-size:12px;font-weight:600;border:none;background:none;color:#94a3b8;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.18s;}
+.cat-btn{flex:none;padding:10px 14px;font-size:12px;font-weight:600;border:none;background:none;color:#94a3b8;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.18s;}
 .cat-btn.active{color:#1a3a5c;border-bottom-color:#1a3a5c;}
 
-/* PHRASE LIST */
+/* ══════════════════════════════
+   PHRASE LIST
+══════════════════════════════ */
 .phrase-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 80px;}
-
-/* PHRASE CARD — highlight mode */
+.job-banner{background:linear-gradient(135deg,#1a3a5c,#2d6a9f);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.job-banner-icon{font-size:22px;}
+.job-banner-text{color:#fff;font-size:12px;font-weight:600;opacity:0.9;}
+.job-banner-sub{color:rgba(255,255,255,0.6);font-size:10px;margin-top:1px;}
 .pcard{background:#fff;border:1.5px solid #e0e6ef;border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.18s;position:relative;}
-.pcard.selected{background:#eaf4ff;border-color:#1a3a5c;box-shadow:0 2px 12px rgba(26,58,92,0.15);}
+.pcard:active{transform:scale(0.98);}
+.pcard.selected{background:#eaf4ff;border-color:#1a3a5c;box-shadow:0 2px 12px rgba(26,58,92,0.12);}
+.pcard-job-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;background:#fff3cd;color:#856404;font-weight:600;margin-bottom:6px;}
 .pcard-jp{font-size:19px;font-weight:700;color:#0d1f35;line-height:1.35;}
 .pcard-read{font-size:11px;color:#b0bec5;margin:2px 0 8px;}
 .pcard-divider{height:1px;background:#f0f4f8;margin-bottom:8px;}
 .pcard-tl{font-size:17px;font-weight:600;color:#1a3a5c;line-height:1.35;}
-.pcard.selected .pcard-tl{color:#0a2d52;}
 .pcard-btns{display:flex;gap:7px;margin-top:11px;}
 .pbtn{flex:1;padding:8px 0;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;transition:transform 0.12s;}
 .pbtn:active{transform:scale(0.95);}
 .pbtn-jp{background:#1a3a5c;color:#fff;}
 .pbtn-tl{background:#ddeeff;color:#1a3a5c;}
 .pcard.selected .pbtn-tl{background:#b8d8f8;}
-.pcard-custom-badge{position:absolute;top:10px;right:10px;font-size:10px;padding:2px 7px;border-radius:8px;background:#fff3cd;color:#856404;font-weight:600;}
+.empty-state{text-align:center;padding:40px 20px;color:#94a3b8;}
+.empty-icon{font-size:40px;margin-bottom:10px;}
+.empty-text{font-size:14px;}
 
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #e0e6ef;padding-bottom:env(safe-area-inset-bottom);}
-.bnav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#94a3b8;border:none;background:none;cursor:pointer;font-family:inherit;transition:color 0.18s;}
-.bnav-btn .bni{font-size:20px;}
-.bnav-btn.active{color:#1a3a5c;}
-
-/* EMERGENCY SCREEN */
+/* ══════════════════════════════
+   EMERGENCY
+══════════════════════════════ */
 .emerg-list{flex:1;overflow-y:auto;padding:10px 12px 80px;}
 .emerg-top{background:#fff3f3;border:1px solid #ffbaba;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#c0392b;font-weight:600;}
-.ecard{background:#fff;border:1px solid #f5a0a0;border-left:4px solid #e74c3c;border-radius:14px;padding:13px 14px;margin-bottom:9px;}
+.ecard{background:#fff;border:1px solid #f5a0a0;border-left:4px solid #e74c3c;border-radius:14px;padding:13px 14px;margin-bottom:9px;cursor:pointer;transition:all 0.15s;}
 .ecard:active{transform:scale(0.98);}
 .ebadge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;background:#fde8e8;color:#c0392b;font-weight:700;margin-bottom:5px;}
 .ecard-jp{font-size:18px;font-weight:700;color:#0d1f35;}
@@ -89,7 +109,9 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
 .ebtn-jp{background:#1a3a5c;color:#fff;}
 .ebtn-tl{background:#ddeeff;color:#1a3a5c;}
 
-/* ADD PHRASE SCREEN */
+/* ══════════════════════════════
+   ADD PHRASE
+══════════════════════════════ */
 .add-screen{flex:1;overflow-y:auto;padding:14px 14px 80px;}
 .add-section{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #e0e6ef;}
 .add-label{font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
@@ -101,13 +123,7 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
 .add-cat-opt.selected{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
 .add-save{width:100%;padding:14px;border-radius:12px;background:#1a3a5c;color:#fff;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:transform 0.15s;}
 .add-save:active{transform:scale(0.98);}
-.custom-list{margin-top:0;}
-.custom-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e0e6ef;border-radius:10px;padding:11px 13px;margin-bottom:7px;}
-.custom-item-text{font-size:14px;color:#0d1f35;font-weight:600;}
-.custom-item-tl{font-size:12px;color:#94a3b8;margin-top:2px;}
-.del-btn{padding:5px 10px;border-radius:8px;border:1px solid #fde8e8;background:#fff5f5;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;}
 .translate-btn{width:100%;padding:11px;border-radius:10px;border:1.5px solid #1a3a5c;background:#fff;color:#1a3a5c;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s;}
-.translate-btn:active{background:#eaf4ff;}
 .translate-btn:disabled{opacity:0.35;cursor:default;}
 .translate-status{font-size:12px;margin-top:7px;padding:8px 12px;border-radius:8px;display:none;line-height:1.4;}
 .translate-status.loading{display:block;background:#f0f4ff;color:#1a3a5c;}
@@ -116,48 +132,75 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
 .lang-translate-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
 .ltag{padding:5px 12px;border-radius:20px;border:1.5px solid #e0e6ef;background:#fff;color:#1a3a5c;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
 .ltag.active{background:#1a3a5c;color:#fff;border-color:#1a3a5c;}
+.custom-list{margin-top:0;}
+.custom-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e0e6ef;border-radius:10px;padding:11px 13px;margin-bottom:7px;}
+.custom-item-text{font-size:14px;color:#0d1f35;font-weight:600;}
+.custom-item-tl{font-size:12px;color:#94a3b8;margin-top:2px;}
+.del-btn{padding:5px 10px;border-radius:8px;border:1px solid #fde8e8;background:#fff5f5;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;}
 
-/* MODAL / SHEET */
-.sheet-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.35);}
-.sheet-overlay.open{display:block;}
-.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-radius:20px 20px 0 0;padding:14px 0 env(safe-area-inset-bottom,20px);z-index:401;}
-.sheet-handle{width:36px;height:4px;background:#d0d8e4;border-radius:2px;margin:0 auto 14px;}
-.sheet-title{font-size:14px;font-weight:700;color:#1a3a5c;padding:0 18px 12px;}
-.sheet-lang-item{display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:14px;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;color:#0d1f35;transition:background 0.15s;}
-.sheet-lang-item:hover{background:#f4f6f9;}
-.sheet-lang-item.active{font-weight:700;color:#1a3a5c;}
-.sheet-lang-item .sflag2{font-size:22px;}
-.sheet-lang-item .scheck{margin-left:auto;color:#1a3a5c;}
+/* ══════════════════════════════
+   BOTTOM NAV
+══════════════════════════════ */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #e0e6ef;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.bnav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#94a3b8;border:none;background:none;cursor:pointer;font-family:inherit;transition:color 0.18s;}
+.bnav-btn .bni{font-size:20px;}
+.bnav-btn.active{color:#1a3a5c;}
 
+/* RESPONSIVE */
+@media (max-height:700px){
+  .setup-card{padding:10px 8px;}
+  .setup-card .sc-icon{font-size:24px;}
+  .setup-card .sc-name{font-size:12px;}
+  .setup-title{font-size:18px;}
+  .setup-sub{font-size:12px;}
+}
+@media (max-width:375px){
+  .setup-grid{gap:7px;}
+  .setup-card .sc-name{font-size:11px;}
+}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- SETUP: 初回のみ -->
+<!-- ══ SETUP WIZARD ══ -->
 <div id="setup">
-  <div class="setup-title">使用言語を選んでください</div>
-  <div class="setup-sub">現場にいる外国人の言語を<br>複数選べます（後で変更可）</div>
-  <div class="setup-grid" id="setup-grid"></div>
-  <button class="setup-done" id="setup-done" onclick="finishSetup()" disabled>決定 →</button>
-  <div class="setup-hint">※ あとからいつでも変更できます</div>
+  <div class="setup-header">
+    <div class="setup-progress">
+      <div class="setup-step-dot active" id="dot-1"></div>
+      <div class="setup-step-dot" id="dot-2"></div>
+    </div>
+    <div class="setup-step-label" id="setup-step-label">STEP 1 / 2</div>
+    <div class="setup-title" id="setup-title">職種を選んでください</div>
+    <div class="setup-sub" id="setup-sub">Job Category — あなたの現場はどれですか？</div>
+  </div>
+
+  <div class="setup-body" id="setup-body"></div>
+
+  <div class="setup-footer">
+    <button class="setup-next" id="setup-next" onclick="setupNext()" disabled>
+      次へ →
+    </button>
+    <button class="setup-back" id="setup-back" onclick="setupBack()" style="display:none;">
+      ← 戻る
+    </button>
+  </div>
 </div>
 
-<!-- HEADER -->
+<!-- ══ MAIN APP ══ -->
 <div class="header">
   <div class="header-top">
     <div class="app-name">現場会話</div>
-    <div class="header-actions">
-      <button class="hbtn" onclick="showSetup()">言語設定 ⚙</button>
+    <div class="header-meta">
+      <div class="job-chip" id="job-chip"></div>
+      <button class="settings-btn" onclick="showSetup()">設定 ⚙</button>
     </div>
   </div>
   <div class="lang-switcher" id="lang-switcher"></div>
 </div>
 
-<!-- CATEGORIES -->
 <div class="cats" id="cats"></div>
 
-<!-- SCREENS -->
 <div id="screen-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
   <div class="phrase-list" id="phrase-list"></div>
 </div>
@@ -174,18 +217,12 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
     <div class="add-section">
       <div class="add-label">① 日本語フレーズを入力</div>
       <input class="add-input" id="add-jp" type="text" placeholder="例：休憩してください" oninput="onJpInput()">
-
       <div class="add-label" style="margin-top:12px;">② 翻訳する言語を選択</div>
       <div class="lang-translate-row" id="lang-translate-row"></div>
-
-      <button class="translate-btn" id="translate-btn" onclick="autoTranslate()" disabled>
-        🌐 自動翻訳する
-      </button>
+      <button class="translate-btn" id="translate-btn" onclick="autoTranslate()" disabled>🌐 自動翻訳する</button>
       <div class="translate-status" id="translate-status"></div>
-
       <div class="add-label" style="margin-top:12px;">③ 翻訳結果（修正可）</div>
       <input class="add-input" id="add-tl" type="text" placeholder="翻訳後に自動入力されます">
-
       <div class="add-label" style="margin-top:12px;">④ カテゴリー</div>
       <div class="add-cat-row" id="add-cat-row"></div>
     </div>
@@ -194,74 +231,119 @@ html,body{height:100%;overflow:hidden;background:#1a3a5c;font-family:-apple-syst
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bnav-btn active" id="bn-main" onclick="switchScreen('main')"><span class="bni">💬</span>会話</button>
   <button class="bnav-btn" id="bn-emerg" onclick="switchScreen('emerg')"><span class="bni">🚨</span>緊急</button>
   <button class="bnav-btn" id="bn-add" onclick="switchScreen('add')"><span class="bni">＋</span>追加</button>
 </div>
 
-</div>
-
-<!-- LANG ADD SHEET -->
-<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">言語を追加 / Add language</div>
-    <div id="sheet-lang-list"></div>
-  </div>
-</div>
+</div><!-- #app -->
 
 <script>
+/* ══════════════════════════════
+   MASTER DATA
+══════════════════════════════ */
+
+// 職種マスター（今後追加しやすい構造）
+const JOBS = [
+  { id:'manufacturing', icon:'🏭', name:'製造業', sub:'工場・加工' },
+  { id:'hospitality',   icon:'🏨', name:'サービス業', sub:'宿泊・飲食' },
+  { id:'retail',        icon:'🛒', name:'卸売・小売業', sub:'コンビニ・スーパー' },
+  { id:'construction',  icon:'🏗️', name:'建設業', sub:'現場・土木' },
+  { id:'care',          icon:'🏥', name:'医療・福祉', sub:'介護・病院' },
+  { id:'agriculture',   icon:'🌾', name:'農業・漁業', sub:'農場・漁港' },
+];
+
+// 言語マスター
 const ALL_LANGS = {
-  en:{ name:'English',     flag:'🇺🇸', bcp:'en-US'  },
-  vi:{ name:'Tiếng Việt', flag:'🇻🇳', bcp:'vi-VN'  },
-  id:{ name:'Bahasa',      flag:'🇮🇩', bcp:'id-ID'  },
-  zh:{ name:'中文',        flag:'🇨🇳', bcp:'zh-CN'  },
-  tl:{ name:'Filipino',    flag:'🇵🇭', bcp:'fil-PH' },
-  my:{ name:'မြန်မာ',     flag:'🇲🇲', bcp:'my-MM'  },
-  th:{ name:'ภาษาไทย',    flag:'🇹🇭', bcp:'th-TH'  },
-  ne:{ name:'नेपाली',     flag:'🇳🇵', bcp:'ne-NP'  },
-  km:{ name:'ខ្មែរ',      flag:'🇰🇭', bcp:'km-KH'  },
+  vi:{ name:'Tiếng Việt', flag:'🇻🇳', bcp:'vi-VN' },
+  id:{ name:'Bahasa',     flag:'🇮🇩', bcp:'id-ID' },
+  my:{ name:'မြန်မာ',    flag:'🇲🇲', bcp:'my-MM' },
+  tl:{ name:'Filipino',   flag:'🇵🇭', bcp:'fil-PH'},
+  en:{ name:'English',    flag:'🇺🇸', bcp:'en-US' },
+  zh:{ name:'中文',       flag:'🇨🇳', bcp:'zh-CN' },
+  th:{ name:'ภาษาไทย',   flag:'🇹🇭', bcp:'th-TH' },
+  ne:{ name:'नेपाली',    flag:'🇳🇵', bcp:'ne-NP' },
+  km:{ name:'ខ្មែរ',     flag:'🇰🇭', bcp:'km-KH' },
 };
 
-const CATS_DEF=[
-  {id:'all',    label:'すべて'},
-  {id:'work',   label:'作業指示'},
-  {id:'safety', label:'安全'},
-  {id:'quality',label:'品質'},
-  {id:'tools',  label:'工具'},
-  {id:'reply',  label:'返答'},
+// カテゴリーマスター
+const CATS_DEF = [
+  { id:'all',     label:'すべて' },
+  { id:'work',    label:'作業指示' },
+  { id:'safety',  label:'安全' },
+  { id:'quality', label:'品質' },
+  { id:'tools',   label:'工具' },
+  { id:'reply',   label:'返答' },
 ];
 
-const PHRASES=[
-  {id:1,  cat:'work',    jp:'これをやってください',          read:'これをやってください',           t:{en:'Please do this',vi:'Vui lòng làm điều này',id:'Tolong lakukan ini',zh:'请做这个',tl:'Gawin ito',my:'ဒါကိုလုပ်ပေးပါ',th:'กรุณาทำสิ่งนี้',ne:'यो गर्नुस्',km:'សូមធ្វើរឿងនេះ'}},
-  {id:2,  cat:'work',    jp:'こっちに来てください',          read:'こっちにきてください',           t:{en:'Please come here',vi:'Vui lòng lại đây',id:'Tolong ke sini',zh:'请过来',tl:'Pakihalika',my:'ဒီကိုလာပေးပါ',th:'กรุณามาที่นี่',ne:'यहाँ आउनुस्',km:'សូមមកទីនេះ'}},
-  {id:3,  cat:'work',    jp:'ゆっくりやってください',        read:'ゆっくりやってください',         t:{en:'Please do it slowly',vi:'Làm chậm thôi',id:'Lakukan perlahan',zh:'请慢慢来',tl:'Dahan-dahan lang',my:'တဖြည်းဖြည်းလုပ်ပေးပါ',th:'ค่อยๆ ทำ',ne:'बिस्तारै गर्नुस्',km:'សូមធ្វើយឺតៗ'}},
-  {id:4,  cat:'work',    jp:'もう一度やってください',        read:'もういちどやってください',       t:{en:'Please do it again',vi:'Làm lại đi',id:'Tolong lakukan lagi',zh:'请再做一遍',tl:'Gawin ulit',my:'နောက်တစ်ကြိမ်လုပ်ပေးပါ',th:'ทำอีกครั้ง',ne:'फेरि गर्नुस्',km:'សូមធ្វើម្ដងទៀត'}},
-  {id:5,  cat:'work',    jp:'手伝ってください',              read:'てつだってください',             t:{en:'Please help me',vi:'Giúp tôi với',id:'Tolong bantu',zh:'请帮我',tl:'Tulungan mo ako',my:'ကူညီပေးပါ',th:'ช่วยหน่อย',ne:'मद्दत गर्नुस्',km:'ជួយខ្ញុំផង'}},
-  {id:6,  cat:'work',    jp:'ここに置いてください',          read:'ここにおいてください',           t:{en:'Please put it here',vi:'Đặt vào đây',id:'Taruh di sini',zh:'请放在这里',tl:'Ilagay dito',my:'ဒီမှာထားပေးပါ',th:'วางไว้ที่นี่',ne:'यहाँ राख्नुस्',km:'ដាក់ទីនេះ'}},
-  {id:7,  cat:'work',    jp:'機械を止めてください',          read:'きかいをとめてください',         t:{en:'Please stop the machine',vi:'Vui lòng dừng máy',id:'Tolong hentikan mesinnya',zh:'请停止机器',tl:'Ihinto ang makina',my:'စက်ကိုရပ်ပေးပါ',th:'กรุณาหยุดเครื่อง',ne:'मेशिन रोक्नुस्',km:'សូមបញ្ឈប់ម៉ាស៊ីន'}},
-  {id:8,  cat:'work',    jp:'休憩してください',              read:'きゅうけいしてください',         t:{en:'Please take a break',vi:'Hãy nghỉ ngơi',id:'Tolong istirahat',zh:'请休息',tl:'Magpahinga',my:'နားပေးပါ',th:'พักผ่อนด้วย',ne:'आराम गर्नुस्',km:'សូមឈប់សម្រាក'}},
-  {id:9,  cat:'safety',  jp:'危ない！止まれ！',              read:'あぶない！とまれ！',             t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
-  {id:10, cat:'safety',  jp:'ヘルメットをかぶってください',  read:'ヘルメットをかぶってください',   t:{en:'Please wear your helmet',vi:'Hãy đội mũ bảo hộ',id:'Tolong pakai helm',zh:'请戴安全帽',tl:'Suotin ang helmet',my:'ဦးထုပ်ဆောင်းပေးပါ',th:'ใส่หมวกนิรภัย',ne:'हेल्मेट लगाउनुस्',km:'ពាក់មួកសុវត្ថិភាព'}},
-  {id:11, cat:'safety',  jp:'手袋をつけてください',          read:'てぶくろをつけてください',       t:{en:'Please wear gloves',vi:'Hãy đeo găng tay',id:'Tolong pakai sarung tangan',zh:'请戴手套',tl:'Suotin ang guwantes',my:'လက်အိတ်ဆောင်းပေးပါ',th:'ใส่ถุงมือ',ne:'पञ्जा लगाउनुस्',km:'ពាក់ស្រោមមេដៃ'}},
-  {id:12, cat:'safety',  jp:'安全確認をしてください',        read:'あんぜんかくにんをしてください', t:{en:'Please do a safety check',vi:'Kiểm tra an toàn',id:'Lakukan cek keamanan',zh:'请检查安全',tl:'Suriin ang kaligtasan',my:'လုံခြုံရေးစစ်ပေးပါ',th:'ตรวจสอบความปลอดภัย',ne:'सुरक्षा जाँच गर्नुस्',km:'ពិនិត្យសុវត្ថិភាព'}},
-  {id:13, cat:'quality', jp:'寸法が違います',                read:'すんぽうがちがいます',           t:{en:'The dimensions are wrong',vi:'Kích thước sai',id:'Dimensinya salah',zh:'尺寸不对',tl:'Mali ang sukat',my:'အတိုင်းအတာမှားသည်',th:'ขนาดผิด',ne:'आयाम गलत छ',km:'ទំហំខុស'}},
-  {id:14, cat:'quality', jp:'不良品です',                    read:'ふりょうひんです',               t:{en:'This is defective',vi:'Sản phẩm bị lỗi',id:'Ini produk cacat',zh:'这是不合格品',tl:'May depekto ito',my:'ချိုတဲ့ကုန်ပစ္စည်း',th:'สินค้าชำรุด',ne:'यो खराब उत्पाद हो',km:'ផលិតផលខូច'}},
-  {id:15, cat:'quality', jp:'バリを取ってください',          read:'バリをとってください',           t:{en:'Remove the burrs',vi:'Loại bỏ bavia',id:'Hilangkan gerinda',zh:'去除毛刺',tl:'Alisin ang burr',my:'Burr ဖယ်ပေးပါ',th:'เอาเสี้ยนออก',ne:'बर्र हटाउनुस्',km:'យកស្រទាប់ចេញ'}},
-  {id:16, cat:'quality', jp:'もう一度確認してください',      read:'もういちどかくにんしてください', t:{en:'Please check again',vi:'Kiểm tra lại',id:'Cek lagi',zh:'请再检查',tl:'Suriin ulit',my:'နောက်တစ်ကြိမ်စစ်ပေးပါ',th:'ตรวจสอบอีกครั้ง',ne:'फेरि जाँच गर्नुस्',km:'ពិនិត្យម្ដងទៀត'}},
-  {id:17, cat:'tools',   jp:'これを使ってください',          read:'これをつかってください',         t:{en:'Please use this',vi:'Dùng cái này',id:'Gunakan ini',zh:'请用这个',tl:'Gamitin ito',my:'ဒါကိုသုံးပေးပါ',th:'ใช้สิ่งนี้',ne:'यो प्रयोग गर्नुस्',km:'ប្រើរបស់នេះ'}},
-  {id:18, cat:'tools',   jp:'工具を返してください',          read:'こうぐをかえしてください',       t:{en:'Please return the tool',vi:'Trả dụng cụ lại',id:'Kembalikan alat',zh:'请归还工具',tl:'Ibalik ang kagamitan',my:'ကိရိယာပြန်ပေးပါ',th:'คืนเครื่องมือ',ne:'औजार फर्काउनुस्',km:'ប្រគល់ឧបករណ៍'}},
-  {id:19, cat:'reply',   jp:'わかりました',                  read:'わかりました',                   t:{en:'I understand',vi:'Tôi hiểu rồi',id:'Saya mengerti',zh:'我明白了',tl:'Naiintindihan ko',my:'နားလည်ပါသည်',th:'เข้าใจแล้ว',ne:'बुझें',km:'ខ្ញុំយល់ហើយ'}},
-  {id:20, cat:'reply',   jp:'わかりません',                  read:'わかりません',                   t:{en:"I don't understand",vi:'Tôi không hiểu',id:'Saya tidak mengerti',zh:'我不明白',tl:'Hindi ko maintindihan',my:'နားမလည်ပါ',th:'ไม่เข้าใจ',ne:'बुझिएन',km:'ខ្ញុំមិនយល់'}},
-  {id:21, cat:'reply',   jp:'もう一度お願いします',          read:'もういちどおねがいします',       t:{en:'Please say it again',vi:'Nói lại đi',id:'Ulangi lagi',zh:'请再说一遍',tl:'Pakiulit',my:'နောက်တစ်ကြိမ်ပြောပေးပါ',th:'พูดอีกครั้ง',ne:'फेरि भन्नुस्',km:'និយាយម្ដងទៀត'}},
-  {id:22, cat:'reply',   jp:'終わりました',                  read:'おわりました',                   t:{en:'I finished',vi:'Xong rồi',id:'Sudah selesai',zh:'完成了',tl:'Tapos na',my:'ပြီးပါပြီ',th:'เสร็จแล้ว',ne:'सकियो',km:'រួចរាល់ហើយ'}},
-  {id:23, cat:'reply',   jp:'少し待ってください',            read:'すこしまってください',           t:{en:'Please wait a moment',vi:'Chờ chút',id:'Tunggu sebentar',zh:'请稍等',tl:'Sandali lang',my:'ခဏစောင့်ပေးပါ',th:'รอแป๊บนึง',ne:'अलि पर्खनुस्',km:'រង់ចាំបន្តិច'}},
-  {id:24, cat:'reply',   jp:'できません',                    read:'できません',                     t:{en:"I can't do it",vi:'Tôi không thể',id:'Saya tidak bisa',zh:'我不能做',tl:'Hindi ko kaya',my:'မလုပ်နိုင်ပါ',th:'ทำไม่ได้',ne:'गर्न सक्दिन',km:'ខ្ញុំធ្វើមិនបាន'}},
+/*
+  フレーズデータ構造:
+  {
+    id: 数値,
+    cat: カテゴリーID,
+    jobs: ['all'] or ['manufacturing','construction',...],  ← 職種フィルター
+    jp: '日本語',
+    read: 'よみがな',
+    t: { en:'...', vi:'...', ... }
+  }
+  jobs:'all' → 全職種共通
+  jobs:['manufacturing'] → 製造業のみ表示
+*/
+const PHRASES = [
+  // ── 全職種共通：作業指示 ──
+  {id:1,  jobs:'all', cat:'work',    jp:'これをやってください',         read:'これをやってください',           t:{en:'Please do this',vi:'Vui lòng làm điều này',id:'Tolong lakukan ini',zh:'请做这个',tl:'Gawin ito',my:'ဒါကိုလုပ်ပေးပါ',th:'กรุณาทำสิ่งนี้',ne:'यो गर्नुस्',km:'សូមធ្វើរឿងនេះ'}},
+  {id:2,  jobs:'all', cat:'work',    jp:'こっちに来てください',         read:'こっちにきてください',           t:{en:'Please come here',vi:'Vui lòng lại đây',id:'Tolong ke sini',zh:'请过来',tl:'Pakihalika',my:'ဒီကိုလာပေးပါ',th:'กรุณามาที่นี่',ne:'यहाँ आउनुस्',km:'សូមមកទីនេះ'}},
+  {id:3,  jobs:'all', cat:'work',    jp:'ゆっくりやってください',       read:'ゆっくりやってください',         t:{en:'Please do it slowly',vi:'Làm chậm thôi',id:'Lakukan perlahan',zh:'请慢慢来',tl:'Dahan-dahan lang',my:'တဖြည်းဖြည်းလုပ်ပေးပါ',th:'ค่อยๆ ทำ',ne:'बिस्तारै गर्नुस्',km:'សូមធ្វើយឺតៗ'}},
+  {id:4,  jobs:'all', cat:'work',    jp:'もう一度やってください',       read:'もういちどやってください',       t:{en:'Please do it again',vi:'Làm lại đi',id:'Tolong lakukan lagi',zh:'请再做一遍',tl:'Gawin ulit',my:'နောက်တစ်ကြိမ်လုပ်ပေးပါ',th:'ทำอีกครั้ง',ne:'फेरि गर्नुस्',km:'សូមធ្វើម្ដងទៀត'}},
+  {id:5,  jobs:'all', cat:'work',    jp:'手伝ってください',             read:'てつだってください',             t:{en:'Please help me',vi:'Giúp tôi với',id:'Tolong bantu',zh:'请帮我',tl:'Tulungan mo ako',my:'ကူညီပေးပါ',th:'ช่วยหน่อย',ne:'मद्दत गर्नुस्',km:'ជួយខ្ញុំផង'}},
+  {id:6,  jobs:'all', cat:'work',    jp:'ここに置いてください',         read:'ここにおいてください',           t:{en:'Please put it here',vi:'Đặt vào đây',id:'Taruh di sini',zh:'请放在这里',tl:'Ilagay dito',my:'ဒီမှာထားပေးပါ',th:'วางไว้ที่นี่',ne:'यहाँ राख्नुस्',km:'ដាក់ទីនេះ'}},
+  {id:7,  jobs:'all', cat:'work',    jp:'休憩してください',             read:'きゅうけいしてください',         t:{en:'Please take a break',vi:'Hãy nghỉ ngơi',id:'Tolong istirahat',zh:'请休息',tl:'Magpahinga',my:'နားပေးပါ',th:'พักผ่อนด้วย',ne:'आराम गर्नुस्',km:'សូមឈប់សម្រាក'}},
+  // ── 全職種共通：安全 ──
+  {id:8,  jobs:'all', cat:'safety',  jp:'危ない！止まれ！',             read:'あぶない！とまれ！',             t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
+  {id:9,  jobs:'all', cat:'safety',  jp:'ヘルメットをかぶってください', read:'ヘルメットをかぶってください',   t:{en:'Please wear your helmet',vi:'Hãy đội mũ bảo hộ',id:'Tolong pakai helm',zh:'请戴安全帽',tl:'Suotin ang helmet',my:'ဦးထုပ်ဆောင်းပေးပါ',th:'ใส่หมวกนิรภัย',ne:'हेल्मेट लगाउनुस्',km:'ពាក់មួកសុវត្ថិភាព'}},
+  {id:10, jobs:'all', cat:'safety',  jp:'手袋をつけてください',         read:'てぶくろをつけてください',       t:{en:'Please wear gloves',vi:'Hãy đeo găng tay',id:'Tolong pakai sarung tangan',zh:'请戴手套',tl:'Suotin ang guwantes',my:'လက်အိတ်ဆောင်းပေးပါ',th:'ใส่ถุงมือ',ne:'पञ्जा लगाउनुस्',km:'ពាក់ស្រោមមេដៃ'}},
+  {id:11, jobs:'all', cat:'safety',  jp:'安全確認をしてください',       read:'あんぜんかくにんをしてください', t:{en:'Please do a safety check',vi:'Kiểm tra an toàn',id:'Lakukan cek keamanan',zh:'请检查安全',tl:'Suriin ang kaligtasan',my:'လုံခြုံရေးစစ်ပေးပါ',th:'ตรวจสอบความปลอดภัย',ne:'सुरक्षा जाँच गर्नुस्',km:'ពិនិត្យសុវត្ថិភាព'}},
+  // ── 全職種共通：返答 ──
+  {id:19, jobs:'all', cat:'reply',   jp:'わかりました',                 read:'わかりました',                   t:{en:'I understand',vi:'Tôi hiểu rồi',id:'Saya mengerti',zh:'我明白了',tl:'Naiintindihan ko',my:'နားလည်ပါသည်',th:'เข้าใจแล้ว',ne:'बुझें',km:'ខ្ញុំយល់ហើយ'}},
+  {id:20, jobs:'all', cat:'reply',   jp:'わかりません',                 read:'わかりません',                   t:{en:"I don't understand",vi:'Tôi không hiểu',id:'Saya tidak mengerti',zh:'我不明白',tl:'Hindi ko maintindihan',my:'နားမလည်ပါ',th:'ไม่เข้าใจ',ne:'बुझिएन',km:'ខ្ញុំមិនយល់'}},
+  {id:21, jobs:'all', cat:'reply',   jp:'もう一度お願いします',         read:'もういちどおねがいします',       t:{en:'Please say it again',vi:'Nói lại đi',id:'Ulangi lagi',zh:'请再说一遍',tl:'Pakiulit',my:'နောက်တစ်ကြိမ်ပြောပေးပါ',th:'พูดอีกครั้ง',ne:'फेरि भन्नुस्',km:'និយាយម្ដងទៀត'}},
+  {id:22, jobs:'all', cat:'reply',   jp:'終わりました',                 read:'おわりました',                   t:{en:'I finished',vi:'Xong rồi',id:'Sudah selesai',zh:'完成了',tl:'Tapos na',my:'ပြီးပါပြီ',th:'เสร็จแล้ว',ne:'सकियो',km:'រួចរាល់ហើយ'}},
+  {id:23, jobs:'all', cat:'reply',   jp:'少し待ってください',           read:'すこしまってください',           t:{en:'Please wait a moment',vi:'Chờ chút',id:'Tunggu sebentar',zh:'请稍等',tl:'Sandali lang',my:'ခဏစောင့်ပေးပါ',th:'รอแป๊บนึง',ne:'अलि पर्खनुस्',km:'រង់ចាំបន្តិច'}},
+  {id:24, jobs:'all', cat:'reply',   jp:'できません',                   read:'できません',                     t:{en:"I can't do it",vi:'Tôi không thể',id:'Saya tidak bisa',zh:'我不能做',tl:'Hindi ko kaya',my:'မလုပ်နိုင်ပါ',th:'ทำไม่ได้',ne:'गर्न सक्दिन',km:'ខ្ញុំធ្វើមិនបាន'}},
+
+  // ── 製造業・建設業：品質 ──
+  {id:12, jobs:['manufacturing','construction'], cat:'quality', jp:'寸法が違います',              read:'すんぽうがちがいます',           t:{en:'The dimensions are wrong',vi:'Kích thước sai',id:'Dimensinya salah',zh:'尺寸不对',tl:'Mali ang sukat',my:'အတိုင်းအတာမှားသည်',th:'ขนาดผิด',ne:'आयाम गलत छ',km:'ទំហំខុស'}},
+  {id:13, jobs:['manufacturing','construction'], cat:'quality', jp:'不良品です',                  read:'ふりょうひんです',               t:{en:'This is defective',vi:'Sản phẩm bị lỗi',id:'Ini produk cacat',zh:'这是不合格品',tl:'May depekto ito',my:'ချိုတဲ့ကုန်ပစ္စည်း',th:'สินค้าชำรุด',ne:'यो खराब उत्पाद हो',km:'ផលិតផលខូច'}},
+  {id:14, jobs:['manufacturing'],                cat:'quality', jp:'バリを取ってください',        read:'バリをとってください',           t:{en:'Remove the burrs',vi:'Loại bỏ bavia',id:'Hilangkan gerinda',zh:'去除毛刺',tl:'Alisin ang burr',my:'Burr ဖယ်ပေးပါ',th:'เอาเสี้ยนออก',ne:'बर्र हटाउनुस्',km:'យកស្រទាប់ចេញ'}},
+  {id:15, jobs:['manufacturing','construction'], cat:'quality', jp:'もう一度確認してください',    read:'もういちどかくにんしてください', t:{en:'Please check again',vi:'Kiểm tra lại',id:'Cek lagi',zh:'请再检查',tl:'Suriin ulit',my:'နောက်တစ်ကြိမ်စစ်ပေးပါ',th:'ตรวจสอบอีกครั้ง',ne:'फेरि जाँच गर्नुस्',km:'ពិនិត្យម្ដងទៀត'}},
+  // ── 製造業：工具 ──
+  {id:16, jobs:['manufacturing'],                cat:'tools',   jp:'これを使ってください',        read:'これをつかってください',         t:{en:'Please use this',vi:'Dùng cái này',id:'Gunakan ini',zh:'请用这个',tl:'Gamitin ito',my:'ဒါကိုသုံးပေးပါ',th:'ใช้สิ่งนี้',ne:'यो प्रयोग गर्नुस्',km:'ប្រើរបស់នេះ'}},
+  {id:17, jobs:['manufacturing'],                cat:'tools',   jp:'工具を返してください',        read:'こうぐをかえしてください',       t:{en:'Please return the tool',vi:'Trả dụng cụ lại',id:'Kembalikan alat',zh:'请归还工具',tl:'Ibalik ang kagamitan',my:'ကိရိယာပြန်ပေးပါ',th:'คืนเครื่องมือ',ne:'औजार फर्काउनुस्',km:'ប្រគល់ឧបករណ៍'}},
+  {id:18, jobs:['manufacturing'],                cat:'tools',   jp:'機械を止めてください',        read:'きかいをとめてください',         t:{en:'Please stop the machine',vi:'Vui lòng dừng máy',id:'Tolong hentikan mesinnya',zh:'请停止机器',tl:'Ihinto ang makina',my:'စက်ကိုရပ်ပေးပါ',th:'กรุณาหยุดเครื่อง',ne:'मेशिन रोक्नुस्',km:'សូមបញ្ឈប់ម៉ាស៊ីន'}},
+
+  // ── 建設業専用 ──
+  {id:30, jobs:['construction'],                 cat:'safety',  jp:'足場に気をつけてください',    read:'あしばにきをつけてください',     t:{en:'Be careful of the scaffolding',vi:'Cẩn thận giàn giáo',id:'Hati-hati dengan perancah',zh:'注意脚手架',tl:'Mag-ingat sa scaffolding',my:'တုတ်ကိုသတိထားပေးပါ',th:'ระวังนั่งร้าน',ne:'ढाँचामा सावधान रहनुस्',km:'ระวังนั่งร้าน'}},
+  {id:31, jobs:['construction'],                 cat:'work',    jp:'ここを掘ってください',        read:'ここをほってください',           t:{en:'Please dig here',vi:'Hãy đào ở đây',id:'Tolong gali di sini',zh:'请在这里挖',tl:'Humukay dito',my:'ဒီမှာတူးပေးပါ',th:'ขุดที่นี่',ne:'यहाँ खन्नुस्',km:'សូមជីកទីនេះ'}},
+
+  // ── サービス業（宿泊・飲食）専用 ──
+  {id:40, jobs:['hospitality'],                  cat:'work',    jp:'お客様をご案内してください',  read:'おきゃくさまをごあんないしてください', t:{en:'Please guide the customer',vi:'Hãy hướng dẫn khách',id:'Tolong pandu tamu',zh:'请引导客人',tl:'Gabayan ang customer',my:'ဧည့်သည်ကိုလမ်းပြပေးပါ',th:'นำทางลูกค้า',ne:'ग्राहकलाई मार्गदर्शन गर्नुस्',km:'សូមណែនាំភ្ញៀវ'}},
+  {id:41, jobs:['hospitality'],                  cat:'work',    jp:'テーブルを拭いてください',    read:'テーブルをふいてください',       t:{en:'Please wipe the table',vi:'Hãy lau bàn',id:'Tolong lap meja',zh:'请擦桌子',tl:'Punasan ang mesa',my:'စားပွဲကိုသုတ်ပေးပါ',th:'เช็ดโต๊ะด้วย',ne:'टेबल पुछ्नुस्',km:'សូមជូតតុ'}},
+
+  // ── 小売業専用 ──
+  {id:50, jobs:['retail'],                       cat:'work',    jp:'商品を補充してください',      read:'しょうひんをほじゅうしてください', t:{en:'Please restock the products',vi:'Hãy bổ sung hàng hóa',id:'Tolong isi ulang produk',zh:'请补充商品',tl:'Mag-restock ng produkto',my:'ကုန်ပစ္စည်းဖြည့်ပေးပါ',th:'เติมสินค้า',ne:'सामान भर्नुस्',km:'សូមបំពេញទំនិញ'}},
+  {id:51, jobs:['retail'],                       cat:'work',    jp:'レジに入ってください',        read:'レジにはいってください',         t:{en:'Please go to the register',vi:'Hãy vào quầy thu ngân',id:'Tolong masuk ke kasir',zh:'请到收银台',tl:'Pumunta sa register',my:'ကောင်တာဝင်ပေးပါ',th:'เข้าแคชเชียร์',ne:'काउन्टरमा जानुस्',km:'សូមចូលទៅបញ្ជរ'}},
+
+  // ── 介護専用 ──
+  {id:60, jobs:['care'],                         cat:'work',    jp:'体を起こしましょう',          read:'からだをおこしましょう',         t:{en:"Let's sit you up",vi:'Hãy ngồi dậy',id:'Mari duduk',zh:'让我们坐起来',tl:"Tayo'y umupo",my:'ထိုင်ကြမည်',th:'ลุกนั่งกัน',ne:'बस्नुस् है',km:'ក្រោកអង្គុយ'}},
+  {id:61, jobs:['care'],                         cat:'work',    jp:'薬の時間です',                read:'くすりのじかんです',             t:{en:"It's time for your medicine",vi:'Đến giờ uống thuốc',id:'Waktunya minum obat',zh:'该吃药了',tl:'Oras na ng gamot',my:'ဆေးသောက်ချိန်ရောက်ပြီ',th:'ถึงเวลากินยา',ne:'औषधी खाने समय भयो',km:'ដល់ពេលញ៉ាំថ្នាំ'}},
+
+  // ── 農業専用 ──
+  {id:70, jobs:['agriculture'],                  cat:'work',    jp:'ここを収穫してください',      read:'ここをしゅうかくしてください',   t:{en:'Please harvest here',vi:'Hãy thu hoạch ở đây',id:'Tolong panen di sini',zh:'请在这里收割',tl:'Mag-ani dito',my:'ဒီမှာသီးနှံကောက်ပေးပါ',th:'เก็บเกี่ยวที่นี่',ne:'यहाँ फसल काट्नुस्',km:'សូមប្រមូលផ្តុំទីនេះ'}},
+  {id:71, jobs:['agriculture'],                  cat:'safety',  jp:'熱中症に気をつけてください',  read:'ねっちゅうしょうにきをつけてください', t:{en:'Be careful of heatstroke',vi:'Cẩn thận say nắng',id:'Hati-hati kena heatstroke',zh:'注意中暑',tl:'Mag-ingat sa init',my:'နေပူဒဏ်သတိထားပေးပါ',th:'ระวังฮีทสโตรก',ne:'लूको सावधान रहनुस्',km:'ระวังฮีทสโตรก'}},
 ];
 
-const EMERG=[
+const EMERG = [
   {badge:'危険', jp:'危ない！止まれ！',  t:{en:'Danger! Stop!',vi:'Nguy hiểm! Dừng!',id:'Bahaya! Berhenti!',zh:'危险！停！',tl:'Panganib! Hinto!',my:'အန္တရာယ်! ရပ်!',th:'อันตราย! หยุด!',ne:'खतरा! रोक!',km:'គ្រោះថ្នាក់! ឈប់!'}},
   {badge:'緊急', jp:'助けてください！',  t:{en:'Help me!',vi:'Giúp tôi!',id:'Tolong!',zh:'救命！',tl:'Saklolo!',my:'ကူညီပါ!',th:'ช่วยด้วย!',ne:'मद्दत!',km:'ជួយខ្ញុំ!'}},
   {badge:'怪我', jp:'怪我をしました',    t:{en:'I am injured',vi:'Tôi bị thương',id:'Saya terluka',zh:'我受伤了',tl:'Nasugatan ako',my:'ဒဏ်ရာရသည်',th:'ฉันบาดเจ็บ',ne:'म चोटिएको छु',km:'ខ្ញុំរបួស'}},
@@ -270,55 +352,149 @@ const EMERG=[
   {badge:'',     jp:'電話してください',  t:{en:'Please call someone',vi:'Gọi điện đi',id:'Tolong telepon',zh:'请打电话',tl:'Tumawag',my:'ဖုန်းခေါ်ပေးပါ',th:'โทรหาคน',ne:'फोन गर्नुस्',km:'ជួយទូរស័ព្ទ'}},
 ];
 
-// STATE
-let activeLangs = JSON.parse(localStorage.getItem('genba-langs')||'[]');
-let currentLang = localStorage.getItem('genba-current')||'';
-let cat = 'all';
-let selectedCard = null;
-let addCat = 'work';
-let customPhrases = JSON.parse(localStorage.getItem('genba-custom')||'[]');
-let nextCustomId = parseInt(localStorage.getItem('genba-next-id')||'1000');
-let setupSelected = new Set();
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let selectedJob    = localStorage.getItem('genba-job') || '';
+let activeLangs    = JSON.parse(localStorage.getItem('genba-langs') || '[]');
+let currentLang    = localStorage.getItem('genba-current') || '';
+let cat            = 'all';
+let selectedCard   = null;
+let addCat         = 'work';
+let translateLang  = '';
+let customPhrases  = JSON.parse(localStorage.getItem('genba-custom') || '[]');
+let nextCustomId   = parseInt(localStorage.getItem('genba-next-id') || '1000');
 
-// SETUP
-function initSetupGrid(){
-  const g = document.getElementById('setup-grid');
-  g.innerHTML = Object.entries(ALL_LANGS).map(([code,L])=>
-    `<button class="setup-lang${setupSelected.has(code)?' selected':''}" onclick="toggleSetup('${code}')" id="sl-${code}">
-      <span class="sflag">${L.flag}</span>${L.name}<span class="sname">${code.toUpperCase()}</span>
-    </button>`
-  ).join('');
+// Setup wizard state
+let setupStep      = 1; // 1=job, 2=lang
+let setupJob       = '';
+let setupLangs     = new Set();
+
+/* ══════════════════════════════
+   SETUP WIZARD
+══════════════════════════════ */
+function renderSetupStep1() {
+  setupStep = 1;
+  document.getElementById('dot-1').className = 'setup-step-dot active';
+  document.getElementById('dot-2').className = 'setup-step-dot';
+  document.getElementById('setup-step-label').textContent = 'STEP 1 / 2';
+  document.getElementById('setup-title').textContent = '職種を選んでください';
+  document.getElementById('setup-sub').textContent = 'Job Category — あなたの現場はどれですか？';
+  document.getElementById('setup-next').textContent = '次へ →';
+  document.getElementById('setup-next').disabled = !setupJob;
+  document.getElementById('setup-back').style.display = 'none';
+
+  document.getElementById('setup-body').innerHTML = `
+    <div class="setup-grid">
+      ${JOBS.map(j => `
+        <button class="setup-card${setupJob===j.id?' selected':''}" onclick="selectJob('${j.id}')">
+          <span class="sc-icon">${j.icon}</span>
+          <span class="sc-name">${j.name}</span>
+          <span class="sc-sub">${j.sub}</span>
+        </button>`).join('')}
+    </div>`;
 }
 
-function toggleSetup(code){
-  if(setupSelected.has(code)) setupSelected.delete(code);
-  else setupSelected.add(code);
-  document.querySelectorAll('.setup-lang').forEach(el=>el.classList.remove('selected'));
-  setupSelected.forEach(c=>{ const el=document.getElementById('sl-'+c); if(el)el.classList.add('selected'); });
-  document.getElementById('setup-done').disabled = setupSelected.size===0;
+function renderSetupStep2() {
+  setupStep = 2;
+  document.getElementById('dot-1').className = 'setup-step-dot done';
+  document.getElementById('dot-2').className = 'setup-step-dot active';
+  document.getElementById('setup-step-label').textContent = 'STEP 2 / 2';
+  document.getElementById('setup-title').textContent = '言語を選んでください';
+  document.getElementById('setup-sub').textContent = 'Language — 複数選択できます（後で変更可）';
+  document.getElementById('setup-next').textContent = 'はじめる ✓';
+  document.getElementById('setup-next').disabled = setupLangs.size === 0;
+  document.getElementById('setup-back').style.display = 'block';
+
+  document.getElementById('setup-body').innerHTML = `
+    <div class="setup-grid">
+      ${Object.entries(ALL_LANGS).map(([code, L]) => `
+        <button class="setup-card${setupLangs.has(code)?' selected':''}" onclick="toggleLang('${code}')">
+          <span class="sc-icon">${L.flag}</span>
+          <span class="sc-name">${L.name}</span>
+          <span class="sc-sub">${code.toUpperCase()}</span>
+        </button>`).join('')}
+    </div>`;
 }
 
-function finishSetup(){
-  if(setupSelected.size===0) return;
-  activeLangs = [...setupSelected];
-  currentLang = activeLangs[0];
-  localStorage.setItem('genba-langs', JSON.stringify(activeLangs));
-  localStorage.setItem('genba-current', currentLang);
-  document.getElementById('setup').classList.add('hidden');
-  renderAll();
+function selectJob(id) {
+  setupJob = id;
+  document.querySelectorAll('.setup-card').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('setup-next').disabled = false;
 }
 
-function showSetup(){
-  setupSelected = new Set(activeLangs);
-  initSetupGrid();
-  document.getElementById('setup-done').disabled = setupSelected.size===0;
+function toggleLang(code) {
+  if (setupLangs.has(code)) setupLangs.delete(code);
+  else setupLangs.add(code);
+  renderSetupStep2();
+}
+
+function setupNext() {
+  if (setupStep === 1) {
+    if (!setupJob) return;
+    renderSetupStep2();
+  } else {
+    if (setupLangs.size === 0) return;
+    // Save
+    selectedJob  = setupJob;
+    activeLangs  = [...setupLangs];
+    currentLang  = activeLangs[0];
+    localStorage.setItem('genba-job',     selectedJob);
+    localStorage.setItem('genba-langs',   JSON.stringify(activeLangs));
+    localStorage.setItem('genba-current', currentLang);
+    document.getElementById('setup').classList.add('hidden');
+    renderAll();
+  }
+}
+
+function setupBack() {
+  renderSetupStep1();
+}
+
+function showSetup() {
+  setupJob   = selectedJob;
+  setupLangs = new Set(activeLangs);
+  setupStep  = 1;
+  renderSetupStep1();
   document.getElementById('setup').classList.remove('hidden');
 }
 
-// LANG SWITCHER
-function renderSwitcher(){
-  const wrap = document.getElementById('lang-switcher');
-  wrap.innerHTML = activeLangs.map(code=>{
+/* ══════════════════════════════
+   HELPERS
+══════════════════════════════ */
+function tl(p) {
+  if (p.t) return p.t[currentLang] || p.t.en || '';
+  return p.tl || '';
+}
+function bcp() { return ALL_LANGS[currentLang]?.bcp || 'en-US'; }
+function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function speak(text, lang) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang || 'ja-JP'; u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+function phraseMatchesJob(p) {
+  if (p.jobs === 'all') return true;
+  if (Array.isArray(p.jobs)) return p.jobs.includes(selectedJob);
+  return true;
+}
+
+/* ══════════════════════════════
+   HEADER / LANG SWITCHER
+══════════════════════════════ */
+function renderHeader() {
+  const job = JOBS.find(j => j.id === selectedJob);
+  document.getElementById('job-chip').textContent = job ? job.icon + ' ' + job.name : '';
+  renderSwitcher();
+}
+
+function renderSwitcher() {
+  document.getElementById('lang-switcher').innerHTML = activeLangs.map(code => {
     const L = ALL_LANGS[code];
     return `<button class="lsw-btn${code===currentLang?' active':''}" onclick="switchLang('${code}')">
       <span class="lf">${L.flag}</span>${L.name}
@@ -326,47 +502,62 @@ function renderSwitcher(){
   }).join('');
 }
 
-function switchLang(code){
+function switchLang(code) {
   currentLang = code;
   localStorage.setItem('genba-current', code);
   renderSwitcher();
   renderPhrases();
   renderEmerg();
-  renderAddCatRow();
 }
 
-// HELPERS
-function tl(p){ return p.t ? (p.t[currentLang]||p.t.en||'') : (p.tl||''); }
-function bcp(){ return ALL_LANGS[currentLang]?.bcp||'en-US'; }
-function esc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-function speak(text, lang){
-  if(!window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang||'ja-JP'; u.rate = 0.85;
-  speechSynthesis.speak(u);
-}
-
-// CATEGORIES
-function renderCats(){
-  document.getElementById('cats').innerHTML = CATS_DEF.map(c=>
+/* ══════════════════════════════
+   CATEGORIES
+══════════════════════════════ */
+function renderCats() {
+  document.getElementById('cats').innerHTML = CATS_DEF.map(c =>
     `<button class="cat-btn${c.id===cat?' active':''}" onclick="setCat('${c.id}')">${c.label}</button>`
   ).join('');
 }
 
-function setCat(id){ cat=id; selectedCard=null; renderCats(); renderPhrases(); }
+function setCat(id) { cat = id; selectedCard = null; renderCats(); renderPhrases(); }
 
-// PHRASES — highlight mode
-function renderPhrases(){
-  const allPhrases = [...PHRASES, ...customPhrases];
-  const list = cat==='all' ? allPhrases : allPhrases.filter(p=>p.cat===cat);
-  document.getElementById('phrase-list').innerHTML = list.map(p=>{
+/* ══════════════════════════════
+   PHRASE LIST
+══════════════════════════════ */
+function renderPhrases() {
+  const job = JOBS.find(j => j.id === selectedJob);
+  let list = [...PHRASES, ...customPhrases].filter(p => {
+    const catMatch = cat === 'all' || p.cat === cat;
+    const jobMatch = phraseMatchesJob(p);
+    return catMatch && jobMatch;
+  });
+
+  // Job-specific phrases banner
+  const jobSpecific = list.filter(p => p.jobs !== 'all' && Array.isArray(p.jobs));
+  const bannerHTML = jobSpecific.length > 0 && cat === 'all' ? `
+    <div class="job-banner">
+      <span class="job-banner-icon">${job?.icon||'💼'}</span>
+      <div>
+        <div class="job-banner-text">${job?.name||''}専用フレーズを表示中</div>
+        <div class="job-banner-sub">${jobSpecific.length}件の専用フレーズが含まれています</div>
+      </div>
+    </div>` : '';
+
+  if (list.length === 0) {
+    document.getElementById('phrase-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-text">このカテゴリーにフレーズがありません</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('phrase-list').innerHTML = bannerHTML + list.map(p => {
     const tlText = tl(p);
-    const isCustom = p.custom;
-    const isSel = selectedCard===p.id;
-    return `<div class="pcard${isSel?' selected':''}" id="pc-${p.id}" onclick="selectCard(${p.id})">
-      ${isCustom?`<span class="pcard-custom-badge">カスタム</span>`:''}
+    const isJobSpecific = Array.isArray(p.jobs) && p.jobs.length > 0;
+    return `<div class="pcard${selectedCard===p.id?' selected':''}" id="pc-${p.id}" onclick="selectCard(${p.id})">
+      ${isJobSpecific && !p.custom ? `<span class="pcard-job-tag">${job?.icon||''} ${job?.name||''}</span>` : ''}
+      ${p.custom ? `<span class="pcard-job-tag">カスタム</span>` : ''}
       <div class="pcard-jp">${p.jp}</div>
       <div class="pcard-read">${p.read||''}</div>
       <div class="pcard-divider"></div>
@@ -379,39 +570,31 @@ function renderPhrases(){
   }).join('');
 }
 
-function selectCard(id){
+function selectCard(id) {
   const allPhrases = [...PHRASES, ...customPhrases];
-  const p = allPhrases.find(x=>x.id===id);
-  if(!p) return;
-
-  // ハイライト切り替え
-  if(selectedCard===id){
-    selectedCard=null;
+  const p = allPhrases.find(x => x.id === id); if (!p) return;
+  if (selectedCard === id) {
+    selectedCard = null;
     document.getElementById('pc-'+id)?.classList.remove('selected');
     return;
   }
-  // 前の選択を解除
-  if(selectedCard){
-    document.getElementById('pc-'+selectedCard)?.classList.remove('selected');
-  }
+  if (selectedCard) document.getElementById('pc-'+selectedCard)?.classList.remove('selected');
   selectedCard = id;
   document.getElementById('pc-'+id)?.classList.add('selected');
-
-  // 日本語→外国語の順で音声再生
   const tlText = tl(p);
   speechSynthesis.cancel();
-  const ujp = new SpeechSynthesisUtterance(p.jp);
-  ujp.lang='ja-JP'; ujp.rate=0.85;
-  const utl = new SpeechSynthesisUtterance(tlText);
-  utl.lang=bcp(); utl.rate=0.85;
-  ujp.onend=()=>{ setTimeout(()=>speechSynthesis.speak(utl),300); };
+  const ujp = new SpeechSynthesisUtterance(p.jp); ujp.lang='ja-JP'; ujp.rate=0.85;
+  const utl = new SpeechSynthesisUtterance(tlText); utl.lang=bcp(); utl.rate=0.85;
+  ujp.onend = () => setTimeout(() => speechSynthesis.speak(utl), 300);
   speechSynthesis.speak(ujp);
 }
 
-// EMERGENCY
-function renderEmerg(){
-  document.getElementById('emerg-list').innerHTML = EMERG.map(e=>{
-    const tlText = e.t[currentLang]||e.t.en;
+/* ══════════════════════════════
+   EMERGENCY
+══════════════════════════════ */
+function renderEmerg() {
+  document.getElementById('emerg-list').innerHTML = EMERG.map(e => {
+    const tlText = e.t[currentLang] || e.t.en;
     return `<div class="ecard">
       ${e.badge?`<div class="ebadge">${e.badge}</div>`:''}
       <div class="ecard-jp">${e.jp}</div>
@@ -424,152 +607,133 @@ function renderEmerg(){
   }).join('');
 }
 
-// ADD PHRASE
-function renderAddCatRow(){
+/* ══════════════════════════════
+   ADD PHRASE + AUTO TRANSLATE
+══════════════════════════════ */
+function renderLangTranslateRow() {
+  if (!translateLang && activeLangs.length > 0) translateLang = currentLang || activeLangs[0];
+  const row = document.getElementById('lang-translate-row'); if (!row) return;
+  row.innerHTML = activeLangs.map(code => {
+    const L = ALL_LANGS[code];
+    return `<button class="ltag${translateLang===code?' active':''}" onclick="setTranslateLang('${code}')">${L.flag} ${L.name}</button>`;
+  }).join('');
+}
+
+function setTranslateLang(code) { translateLang = code; renderLangTranslateRow(); checkTranslateReady(); }
+
+function onJpInput() {
+  checkTranslateReady();
+  document.getElementById('translate-status').className = 'translate-status';
+  document.getElementById('translate-status').textContent = '';
+}
+
+function checkTranslateReady() {
+  const jp = document.getElementById('add-jp').value.trim();
+  const btn = document.getElementById('translate-btn');
+  if (btn) btn.disabled = !(jp && translateLang);
+}
+
+async function autoTranslate() {
+  const jp = document.getElementById('add-jp').value.trim();
+  if (!jp || !translateLang) return;
+  const btn = document.getElementById('translate-btn');
+  const status = document.getElementById('translate-status');
+  const L = ALL_LANGS[translateLang];
+  btn.disabled = true; btn.textContent = '🌐 翻訳中...';
+  status.className = 'translate-status loading';
+  status.textContent = `${L.flag} ${L.name}に翻訳しています...`;
+  const langMap = {en:'en-US',vi:'vi-VN',id:'id-ID',zh:'zh-CN',tl:'tl-PH',my:'my-MM',th:'th-TH',ne:'ne-NP',km:'km-KH'};
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(jp)}&langpair=ja|${langMap[translateLang]||translateLang}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.responseStatus === 200 && data.responseData?.translatedText) {
+      document.getElementById('add-tl').value = data.responseData.translatedText;
+      status.className = 'translate-status success';
+      status.textContent = `✓ ${L.flag} 翻訳完了 — 内容を確認・修正してください`;
+    } else throw new Error();
+  } catch {
+    status.className = 'translate-status error';
+    status.textContent = '⚠ 翻訳できませんでした。手動で入力してください。';
+  } finally {
+    btn.disabled = false; btn.innerHTML = '🌐 自動翻訳する';
+  }
+}
+
+function renderAddCatRow() {
   document.getElementById('add-cat-row').innerHTML = CATS_DEF.filter(c=>c.id!=='all').map(c=>
     `<button class="add-cat-opt${addCat===c.id?' selected':''}" onclick="setAddCat('${c.id}')">${c.label}</button>`
   ).join('');
 }
 
-function setAddCat(id){ addCat=id; renderAddCatRow(); }
+function setAddCat(id) { addCat = id; renderAddCatRow(); }
 
-function savePhrase(){
+function savePhrase() {
   const jp = document.getElementById('add-jp').value.trim();
   const tlVal = document.getElementById('add-tl').value.trim();
-  if(!jp||!tlVal){ alert('日本語と外国語の両方を入力してください'); return; }
-  const p = { id:nextCustomId++, cat:addCat, jp, read:'', tl:tlVal, custom:true };
+  if (!jp || !tlVal) { alert('日本語と外国語の両方を入力してください'); return; }
+  const p = { id:nextCustomId++, jobs:'all', cat:addCat, jp, read:'', tl:tlVal, custom:true };
   customPhrases.push(p);
   localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
   localStorage.setItem('genba-next-id', String(nextCustomId));
-  document.getElementById('add-jp').value='';
-  document.getElementById('add-tl').value='';
-  renderCustomList();
-  renderPhrases();
+  document.getElementById('add-jp').value = '';
+  document.getElementById('add-tl').value = '';
+  document.getElementById('translate-status').className = 'translate-status';
+  renderCustomList(); renderPhrases();
   alert('追加しました！');
 }
 
-function deleteCustom(id){
-  customPhrases = customPhrases.filter(p=>p.id!==id);
+function deleteCustom(id) {
+  customPhrases = customPhrases.filter(p => p.id !== id);
   localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
-  renderCustomList();
-  renderPhrases();
+  renderCustomList(); renderPhrases();
 }
 
-function renderCustomList(){
-  const wrap = document.getElementById('custom-list');
-  if(customPhrases.length===0){ wrap.innerHTML=''; return; }
+function renderCustomList() {
+  const wrap = document.getElementById('custom-list'); if (!wrap) return;
+  if (customPhrases.length === 0) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = `<div class="add-label" style="margin-bottom:8px;">追加済みフレーズ</div>` +
-    customPhrases.map(p=>`
+    customPhrases.map(p => `
     <div class="custom-item">
       <div><div class="custom-item-text">${p.jp}</div><div class="custom-item-tl">${p.tl}</div></div>
       <button class="del-btn" onclick="deleteCustom(${p.id})">削除</button>
     </div>`).join('');
 }
 
-// SCREEN SWITCH
-function switchScreen(name){
-  ['main','emerg','add'].forEach(s=>{
-    document.getElementById('screen-'+s).style.display = s===name?'flex':'none';
+/* ══════════════════════════════
+   SCREEN SWITCH
+══════════════════════════════ */
+function switchScreen(name) {
+  ['main','emerg','add'].forEach(s => {
+    document.getElementById('screen-'+s).style.display = s===name ? 'flex' : 'none';
   });
-  ['main','emerg','add'].forEach(s=>{
+  ['main','emerg','add'].forEach(s => {
     document.getElementById('bn-'+s).classList.toggle('active', s===name);
   });
-  if(name==='add'){ renderAddCatRow(); renderCustomList(); renderLangTranslateRow(); checkTranslateReady(); }
+  if (name==='add') { renderAddCatRow(); renderCustomList(); renderLangTranslateRow(); checkTranslateReady(); }
 }
 
-function closeSheet(){ document.getElementById('sheet-overlay').classList.remove('open'); }
-
-// AUTO TRANSLATE
-let translateLang = '';
-
-function renderLangTranslateRow(){
-  const row = document.getElementById('lang-translate-row');
-  if(!row) return;
-  row.innerHTML = activeLangs.map(code => {
-    const L = ALL_LANGS[code];
-    return `<button class="ltag${translateLang===code?' active':''}" onclick="setTranslateLang('${code}')">${L.flag} ${L.name}</button>`;
-  }).join('');
-  // auto-select current lang
-  if(!translateLang && activeLangs.length>0){
-    translateLang = currentLang || activeLangs[0];
-    renderLangTranslateRow();
-  }
-}
-
-function setTranslateLang(code){
-  translateLang = code;
-  renderLangTranslateRow();
-  checkTranslateReady();
-}
-
-function onJpInput(){
-  checkTranslateReady();
-  // clear previous result
-  document.getElementById('translate-status').className='translate-status';
-  document.getElementById('translate-status').textContent='';
-}
-
-function checkTranslateReady(){
-  const jp = document.getElementById('add-jp').value.trim();
-  const btn = document.getElementById('translate-btn');
-  if(btn) btn.disabled = !(jp && translateLang);
-}
-
-async function autoTranslate(){
-  const jp = document.getElementById('add-jp').value.trim();
-  if(!jp || !translateLang) return;
-
-  const btn = document.getElementById('translate-btn');
-  const status = document.getElementById('translate-status');
-  const L = ALL_LANGS[translateLang];
-
-  btn.disabled = true;
-  btn.textContent = '🌐 翻訳中...';
-  status.className = 'translate-status loading';
-  status.textContent = `${L.flag} ${L.name}に翻訳しています...`;
-
-  // MyMemory API: ja → target lang
-  const langMap = {en:'en-US',vi:'vi-VN',id:'id-ID',zh:'zh-CN',tl:'tl-PH',my:'my-MM',th:'th-TH',ne:'ne-NP',km:'km-KH'};
-  const targetLang = langMap[translateLang] || translateLang;
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(jp)}&langpair=ja|${targetLang}`;
-
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if(data.responseStatus === 200 && data.responseData?.translatedText){
-      const result = data.responseData.translatedText;
-      document.getElementById('add-tl').value = result;
-      status.className = 'translate-status success';
-      status.textContent = `✓ ${L.flag} 翻訳完了 — 内容を確認・修正してください`;
-    } else {
-      throw new Error('translation failed');
-    }
-  } catch(e) {
-    status.className = 'translate-status error';
-    status.textContent = '⚠ 翻訳できませんでした。通信を確認するか手動で入力してください。';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🌐 自動翻訳する';
-  }
-}
-
-// RENDER ALL
-function renderAll(){
-  renderSwitcher();
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
+function renderAll() {
+  renderHeader();
   renderCats();
   renderPhrases();
   renderEmerg();
 }
 
-// INIT
-if(activeLangs.length>0 && currentLang){
+// 初回 or 設定済み
+if (selectedJob && activeLangs.length > 0 && currentLang) {
   document.getElementById('setup').classList.add('hidden');
   renderAll();
 } else {
-  initSetupGrid();
+  setupJob = selectedJob;
+  setupLangs = new Set(activeLangs);
+  renderSetupStep1();
 }
 
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
 </html>
