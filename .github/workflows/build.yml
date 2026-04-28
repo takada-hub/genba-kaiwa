@@ -26,27 +26,21 @@ jobs:
         run: |
           git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa
           cd twa
-          find . -name "strings.xml" | head -5
-          ls app/src/main/
+          find . -name "strings.xml"
+          find . -name "*.gradle"
 
-      - name: Update App Settings
+      - name: Show file structure
         run: |
           cd twa
-          STRINGS_FILE=$(find . -name "strings.xml" | head -1)
-          echo "Found: $STRINGS_FILE"
-          cat $STRINGS_FILE
-          sed -i 's|https://svgomg.net|https://takada-hub.github.io/genba-kaiwa/|g' $STRINGS_FILE
-          sed -i 's|SVGOMG TWA|現場会話|g' $STRINGS_FILE
-          sed -i 's|gradle-4.6-all|gradle-8.0-all|g' gradle/wrapper/gradle-wrapper.properties
+          ls -la
+          ls -la app/ || true
+          ls -la app/src/ || true
+          ls -la app/src/main/ || true
+          ls -la app/src/main/res/ || true
+          ls -la app/src/main/res/values/ || true
 
-      - name: Build APK
-        run: |
-          cd twa
-          chmod +x gradlew
-          ./gradlew assembleRelease
-
-      - name: Upload APK
+      - name: Upload structure info
         uses: actions/upload-artifact@v4
         with:
-          name: genba-kaiwa-apk
-          path: twa/app/build/outputs/apk/release/
+          name: debug-info
+          path: twa/
