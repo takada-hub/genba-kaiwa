@@ -30,7 +30,6 @@ jobs:
       - name: Create Android TWA Project
         run: |
           mkdir -p twa/app/src/main/res/values
-          mkdir -p twa/gradle/wrapper
 
           cat > twa/settings.gradle << 'EOF'
           include ':app'
@@ -48,15 +47,14 @@ jobs:
           apply plugin: 'com.android.application'
           android {
               namespace 'com.takadahub.genbakaiwa'
-              compileSdk 34
+              compileSdk 33
               defaultConfig {
                   applicationId "com.takadahub.genbakaiwa"
                   minSdk 19
-                  targetSdk 34
+                  targetSdk 33
                   versionCode 1
                   versionName "1.0"
               }
-              android.suppressUnsupportedCompileSdk=34
           }
           dependencies {
               implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.4.0'
