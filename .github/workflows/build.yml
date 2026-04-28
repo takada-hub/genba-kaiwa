@@ -60,6 +60,20 @@ jobs:
                   versionCode 1
                   versionName "1.0"
               }
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
+                      storePassword System.getenv("KEYSTORE_PASSWORD") ?: "android123"
+                      keyAlias System.getenv("KEY_ALIAS") ?: "android"
+                      keyPassword System.getenv("KEY_PASSWORD") ?: "android123"
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                      minifyEnabled false
+                  }
+              }
           }
           dependencies {
               implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.4.0'
@@ -93,9 +107,26 @@ jobs:
           </manifest>
           EOF
 
-      - name: Build APK
+      - name: Copy Keystore
+        run: |
+          cp /Users/naoki/android.keystore twa/keystore.jks || \
+          keytool -genkey -v \
+            -keystore twa/keystore.jks \
+            -alias android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass android123 \
+            -keypass android123 \
+            -dname "CN=Naoki Takada, OU=Dev, O=Takada, L=Osaka, S=Osaka, C=JP"
+
+      - name: Build Signed APK
         run: |
           cd twa
+          KEYSTORE_PATH=keystore.jks \
+          KEYSTORE_PASSWORD=android123 \
+          KEY_ALIAS=android \
+          KEY_PASSWORD=android123 \
           gradle assembleRelease
           find . -name "*.apk" -type f
 
@@ -103,5 +134,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: genba-kaiwa-apk
-          path: twa/app/build/outputs/apk/
+          path: twa/app/build/outputs/apk/release/
           if-no-files-found: warn
