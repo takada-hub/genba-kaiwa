@@ -1,26 +1,33 @@
 {
-  "name": "現場の日本語 - Manufacturing Japanese",
-  "short_name": "現場の日本語",
-  "description": "Manufacturing Japanese for Foreign Trainees",
-  "start_url": "/",
+  "name": "現場会話 - Genba Kaiwa",
+  "short_name": "現場会話",
+  "description": "外国人スタッフと日本人スタッフのコミュニケーション支援アプリ",
+  "start_url": "/genba-kaiwa/index.html",
+  "scope": "/genba-kaiwa/",
   "display": "standalone",
   "background_color": "#1E3A5F",
   "theme_color": "#1E3A5F",
   "orientation": "portrait",
+  "lang": "ja",
+  "categories": ["education", "productivity", "business"],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ],
-  "categories": ["education", "productivity"],
-  "lang": "ja"
+  ]
 }
