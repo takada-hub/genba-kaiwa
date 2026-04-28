@@ -11,35 +11,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        env:
+          SKIP_JDK_VERSION_CHECK: true
 
-      - name: Create TWA Project
+      - name: Clone TWA Template
         run: |
           git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa
           cd twa
-          cat > app/src/main/res/values/strings.xml << 'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-            <string name="app_name">現場会話</string>
-            <string name="asset_statements">[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"web","site":"https://takada-hub.github.io"}}]</string>
-            <string name="default_url">https://takada-hub.github.io/genba-kaiwa/</string>
-          </resources>
-          EOF
+          sed -i 's|https://svgomg.net|https://takada-hub.github.io/genba-kaiwa/|g' app/src/main/res/values/strings.xml
+          sed -i 's|SVGOMG TWA|現場会話|g' app/src/main/res/values/strings.xml
+          sed -i "s|compileSdkVersion 28|compileSdkVersion 34|g" app/build.gradle
+          sed -i "s|targetSdkVersion 28|targetSdkVersion 34|g" app/build.gradle
+          cat gradle/wrapper/gradle-wrapper.properties
+
+      - name: Update Gradle Version
+        run: |
+          cd twa
+          sed -i 's|gradle-4.6-all|gradle-8.0-all|g' gradle/wrapper/gradle-wrapper.properties
+          cat gradle/wrapper/gradle-wrapper.properties
 
       - name: Build APK
         run: |
           cd twa
           chmod +x gradlew
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: genba-kai
+          name: genba-kaiwa-apk
+          path: twa/app/build/outputs/apk/release/
