@@ -22,25 +22,36 @@ jobs:
         env:
           SKIP_JDK_VERSION_CHECK: true
 
-      - name: Clone TWA Template
+      - name: Clone and Setup TWA
         run: |
           git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa
           cd twa
-          find . -name "strings.xml"
-          find . -name "*.gradle"
+          # ファイル構造確認
+          find . -name "strings.xml" -type f
+          find . -name "*.gradle" -type f | head -5
 
-      - name: Show file structure
+      - name: Update TWA Settings
         run: |
           cd twa
-          ls -la
-          ls -la app/ || true
-          ls -la app/src/ || true
-          ls -la app/src/main/ || true
-          ls -la app/src/main/res/ || true
-          ls -la app/src/main/res/values/ || true
+          # strings.xmlを探して更新
+          STRING_FILE=$(find . -name "strings.xml" -type f | head -1)
+          echo "File: $STRING_FILE"
+          cat "$STRING_FILE"
+          # URLを更新
+          sed -i "s|https://svgomg.net|https://takada-hub.github.io/genba-kaiwa/|g" "$STRING_FILE"
+          sed -i "s|svgomg.net|takada-hub.github.io|g" "$STRING_FILE"
+          # Gradle wrapper更新
+          sed -i 's|gradle-4.6-all|gradle-7.6-all|g' gradle/wrapper/gradle-wrapper.properties
+          cat gradle/wrapper/gradle-wrapper.properties
 
-      - name: Upload structure info
+      - name: Build Release APK
+        run: |
+          cd twa
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-info
-          path: twa/
+          name: genba-kaiwa-apk
+          path: twa/app/build/outputs/apk/release/
