@@ -22,6 +22,11 @@ jobs:
         env:
           SKIP_JDK_VERSION_CHECK: true
 
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.0'
+
       - name: Create Android TWA Project
         run: |
           mkdir -p twa/app/src/main/res/values
@@ -37,10 +42,6 @@ jobs:
               dependencies { classpath 'com.android.tools.build:gradle:8.1.0' }
           }
           allprojects { repositories { google(); mavenCentral() } }
-          EOF
-
-          cat > twa/gradle/wrapper/gradle-wrapper.properties << 'EOF'
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
           EOF
 
           cat > twa/app/build.gradle << 'EOF'
@@ -87,14 +88,10 @@ jobs:
           </manifest>
           EOF
 
-          curl -o twa/gradlew https://raw.githubusercontent.com/gradle/gradle/master/gradlew
-          chmod +x twa/gradlew
-
       - name: Build APK
         run: |
           cd twa
-          ./gradlew assembleRelease --stacktrace
-          echo "=== Finding APK files ==="
+          gradle assembleRelease --stacktrace
           find . -name "*.apk" -type f
 
       - name: Upload APK
