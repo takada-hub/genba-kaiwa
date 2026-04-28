@@ -26,23 +26,24 @@ jobs:
         run: |
           git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa
           cd twa
-          sed -i 's|https://svgomg.net|https://takada-hub.github.io/genba-kaiwa/|g' app/src/main/res/values/strings.xml
-          sed -i 's|SVGOMG TWA|現場会話|g' app/src/main/res/values/strings.xml
-          sed -i "s|compileSdkVersion 28|compileSdkVersion 34|g" app/build.gradle
-          sed -i "s|targetSdkVersion 28|targetSdkVersion 34|g" app/build.gradle
-          cat gradle/wrapper/gradle-wrapper.properties
+          find . -name "strings.xml" | head -5
+          ls app/src/main/
 
-      - name: Update Gradle Version
+      - name: Update App Settings
         run: |
           cd twa
+          STRINGS_FILE=$(find . -name "strings.xml" | head -1)
+          echo "Found: $STRINGS_FILE"
+          cat $STRINGS_FILE
+          sed -i 's|https://svgomg.net|https://takada-hub.github.io/genba-kaiwa/|g' $STRINGS_FILE
+          sed -i 's|SVGOMG TWA|現場会話|g' $STRINGS_FILE
           sed -i 's|gradle-4.6-all|gradle-8.0-all|g' gradle/wrapper/gradle-wrapper.properties
-          cat gradle/wrapper/gradle-wrapper.properties
 
       - name: Build APK
         run: |
           cd twa
           chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+          ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
