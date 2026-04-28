@@ -47,6 +47,7 @@ jobs:
           cat > twa/app/build.gradle << 'EOF'
           apply plugin: 'com.android.application'
           android {
+              namespace 'com.takadahub.genbakaiwa'
               compileSdkVersion 34
               defaultConfig {
                   applicationId "com.takadahub.genbakaiwa"
