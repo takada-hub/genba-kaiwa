@@ -43,6 +43,11 @@ jobs:
           allprojects { repositories { google(); mavenCentral() } }
           EOF
 
+          cat > twa/gradle.properties << 'EOF'
+          android.useAndroidX=true
+          android.enableJetifier=true
+          EOF
+
           cat > twa/app/build.gradle << 'EOF'
           apply plugin: 'com.android.application'
           android {
