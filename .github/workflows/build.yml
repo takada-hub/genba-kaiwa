@@ -14,7 +14,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'
 
       - name: Setup Android SDK
@@ -42,5 +42,4 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: genba-kaiwa-apk
-          path: twa/app/build/outputs/apk/release/
+          name: genba-kai
