@@ -27,6 +27,18 @@ jobs:
         with:
           gradle-version: '8.4'
 
+      - name: Generate Keystore
+        run: |
+          keytool -genkey -v \
+            -keystore keystore.jks \
+            -alias android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass android123 \
+            -keypass android123 \
+            -dname "CN=Naoki Takada, OU=Dev, O=Takada, L=Osaka, S=Osaka, C=JP"
+
       - name: Create Android TWA Project
         run: |
           mkdir -p twa/app/src/main/res/values
@@ -62,10 +74,10 @@ jobs:
               }
               signingConfigs {
                   release {
-                      storeFile file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
-                      storePassword System.getenv("KEYSTORE_PASSWORD") ?: "android123"
-                      keyAlias System.getenv("KEY_ALIAS") ?: "android"
-                      keyPassword System.getenv("KEY_PASSWORD") ?: "android123"
+                      storeFile file("../../keystore.jks")
+                      storePassword "android123"
+                      keyAlias "android"
+                      keyPassword "android123"
                   }
               }
               buildTypes {
@@ -107,32 +119,15 @@ jobs:
           </manifest>
           EOF
 
-      - name: Copy Keystore
-        run: |
-          cp /Users/naoki/android.keystore twa/keystore.jks || \
-          keytool -genkey -v \
-            -keystore twa/keystore.jks \
-            -alias android \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass android123 \
-            -keypass android123 \
-            -dname "CN=Naoki Takada, OU=Dev, O=Takada, L=Osaka, S=Osaka, C=JP"
-
       - name: Build Signed APK
         run: |
           cd twa
-          KEYSTORE_PATH=keystore.jks \
-          KEYSTORE_PASSWORD=android123 \
-          KEY_ALIAS=android \
-          KEY_PASSWORD=android123 \
           gradle assembleRelease
           find . -name "*.apk" -type f
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: genba-kaiwa-apk
+          name: genba-kaiwa-signed-apk
           path: twa/app/build/outputs/apk/release/
           if-no-files-found: warn
