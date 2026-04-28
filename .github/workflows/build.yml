@@ -11,14 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -28,18 +20,27 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build TWA
+      - name: Create TWA Project
         run: |
-          bubblewrap init \
-            --manifest=https://takada-hub.github.io/genba-kaiwa/manifest.json \
-            --directory=./twa
+          git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa
           cd twa
-          bubblewrap build
+          cat > app/src/main/res/values/strings.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+            <string name="app_name">現場会話</string>
+            <string name="asset_statements">[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"web","site":"https://takada-hub.github.io"}}]</string>
+            <string name="default_url">https://takada-hub.github.io/genba-kaiwa/</string>
+          </resources>
+          EOF
+
+      - name: Build APK
+        run: |
+          cd twa
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: genba-kaiwa-apk
-          path: |
-            twa/app-release-signed.apk
-            twa/app-release-unsigned.apk
+          path: twa/app/build/outputs/apk/release/
