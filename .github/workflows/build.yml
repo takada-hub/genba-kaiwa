@@ -39,7 +39,7 @@ jobs:
           cat > twa/build.gradle << 'EOF'
           buildscript {
               repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.1.0' }
+              dependencies { classpath 'com.android.tools.build:gradle:8.3.0' }
           }
           allprojects { repositories { google(); mavenCentral() } }
           EOF
@@ -48,14 +48,15 @@ jobs:
           apply plugin: 'com.android.application'
           android {
               namespace 'com.takadahub.genbakaiwa'
-              compileSdkVersion 34
+              compileSdk 34
               defaultConfig {
                   applicationId "com.takadahub.genbakaiwa"
-                  minSdkVersion 19
-                  targetSdkVersion 34
+                  minSdk 19
+                  targetSdk 34
                   versionCode 1
                   versionName "1.0"
               }
+              android.suppressUnsupportedCompileSdk=34
           }
           dependencies {
               implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.4.0'
@@ -92,7 +93,7 @@ jobs:
       - name: Build APK
         run: |
           cd twa
-          gradle assembleRelease --stacktrace
+          gradle assembleRelease
           find . -name "*.apk" -type f
 
       - name: Upload APK
