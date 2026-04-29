@@ -825,6 +825,7 @@ function selCard(id) {
   recentPhraseIds = [id, ...recentPhraseIds.filter(x => x !== id)].slice(0, 20);
   localStorage.setItem('genba-recent-phrases', JSON.stringify(recentPhraseIds));
 
+  // ハイライトのみ（音声は各ボタンから個別に再生）
   if (selectedCard === id) {
     selectedCard = null;
     document.getElementById('pc-'+id)?.classList.remove('selected');
@@ -833,18 +834,6 @@ function selCard(id) {
   if (selectedCard) document.getElementById('pc-'+selectedCard)?.classList.remove('selected');
   selectedCard = id;
   document.getElementById('pc-'+id)?.classList.add('selected');
-
-  const tlTxt = T(p);
-  // 日本語→外国語の順で再生
-  speechSynthesis.cancel();
-  setTimeout(() => {
-    const ujp = new SpeechSynthesisUtterance(p.jp);
-    ujp.lang = 'ja-JP'; ujp.rate = 0.85; ujp.volume = 1;
-    const utl = new SpeechSynthesisUtterance(tlTxt);
-    utl.lang = BCP(); utl.rate = 0.85; utl.volume = 1;
-    ujp.onend = () => setTimeout(() => speechSynthesis.speak(utl), 400);
-    speechSynthesis.speak(ujp);
-  }, 100);
 }
 
 /* ══ EMERGENCY ══ */
