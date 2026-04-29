@@ -765,6 +765,18 @@ function speakById(id, which) {
   speak(text, lang);
 }
 
+function speakCached(id, which) {
+  const cache = window._phraseCache && window._phraseCache[id];
+  if (!cache) {
+    // キャッシュがない場合はデータから直接取得
+    const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
+    if (!p) return;
+    speak(which === 'jp' ? p.jp : T(p), which === 'jp' ? 'ja-JP' : BCP());
+    return;
+  }
+  speak(which === 'jp' ? cache.jp : cache.tl, which === 'jp' ? 'ja-JP' : cache.bcp);
+}
+
 function jobMatch(p) {
   return p.jobs === 'all' || (Array.isArray(p.jobs) && p.jobs.includes(selectedJob));
 }
@@ -837,18 +849,24 @@ function renderPhrases() {
     return;
   }
 
+  // フレーズデータをキャッシュ（音声再生用）
+  window._phraseCache = {};
+  list.forEach(p => {
+    window._phraseCache[p.id] = { jp: p.jp, tl: T(p), bcp: BCP() };
+  });
+
   document.getElementById('phrase-list').innerHTML = list.map(p => {
     const tlTxt = T(p);
     const isRecent = recentSet.has(p.id);
     return `<div class="pcard${selectedCard===p.id?' selected':''}" id="pc-${p.id}" onclick="selCard(${p.id})">
-      ${isRecent ? '<div style="font-size:10px;color:#94a3b8;margin-bottom:4px;">🕐 直近使用</div>' : ''}
+      ${isRecent ? '<div style="font-size:10px;color:var(--accent);margin-bottom:4px;font-size:10px;">🕐 直近使用</div>' : ''}
       <div class="pcard-jp">${p.jp}</div>
       <div class="pcard-read">${p.read||''}</div>
       <div class="pcard-divider"></div>
       <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
-        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speak('${esc(p.jp)}','ja-JP')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speak('${esc(tlTxt)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakCached(${p.id},'jp')">🔊 日本語</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakCached(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
