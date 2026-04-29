@@ -716,30 +716,53 @@ function BCP() { return ALL_LANGS[currentLang]?.bcp || 'en-US'; }
 function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 /* ══ 音声再生（修正済み）══ */
+// iPhone Safari音声再生対応
 function speak(text, lang) {
-  if (!window.speechSynthesis) return;
-  // iPhoneではcancel後に少し待つ必要がある
-  speechSynthesis.cancel();
-  const trySpeak = () => {
+  if (!window.speechSynthesis) { alert('音声合成非対応のブラウザです'); return; }
+  
+  // 既存の再生を止める
+  window.speechSynthesis.cancel();
+  
+  // iPhoneはユーザー操作の直後でないと再生できない
+  // また voices が非同期で読み込まれるため待機が必要
+  const doSpeak = () => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang || 'ja-JP';
     u.rate = 0.85;
-    u.volume = 1;
-    u.pitch = 1;
-    speechSynthesis.speak(u);
+    u.volume = 1.0;
+    u.pitch = 1.0;
+    
+    // 言語に合うvoiceを探す
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      const langCode = (lang || 'ja-JP').split('-')[0];
+      const matched = voices.find(v => v.lang.startsWith(langCode));
+      if (matched) u.voice = matched;
+    }
+    
+    window.speechSynthesis.speak(u);
   };
-  // キャンセル後150ms待ってから再生（iPhone対策）
-  setTimeout(trySpeak, 150);
+  
+  // voicesが読み込まれているか確認
+  if (window.speechSynthesis.getVoices().length > 0) {
+    setTimeout(doSpeak, 50);
+  } else {
+    // voices未読み込みの場合はイベント待ち
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      setTimeout(doSpeak, 50);
+    };
+    // フォールバック: 1秒後に強制実行
+    setTimeout(doSpeak, 500);
+  }
 }
 
 function speakById(id, which) {
   const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
   if (!p) return;
-  if (which === 'jp') {
-    speak(p.jp, 'ja-JP');
-  } else {
-    speak(T(p), BCP());
-  }
+  const text = which === 'jp' ? p.jp : T(p);
+  const lang = which === 'jp' ? 'ja-JP' : BCP();
+  speak(text, lang);
 }
 
 function jobMatch(p) {
