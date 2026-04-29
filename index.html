@@ -716,71 +716,37 @@ function BCP() { return ALL_LANGS[currentLang]?.bcp || 'en-US'; }
 function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 /* ══ 音声再生（修正済み）══ */
-// iPhone Safari音声再生対応
-function speak(text, lang) {
-  if (!window.speechSynthesis) { alert('音声合成非対応のブラウザです'); return; }
-  
-  // 既存の再生を止める
+// 音声再生（Web Speech API）
+function playSpeech(text, langCode) {
+  if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  
-  // iPhoneはユーザー操作の直後でないと再生できない
-  // また voices が非同期で読み込まれるため待機が必要
-  const doSpeak = () => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang || 'ja-JP';
-    u.rate = 0.85;
-    u.volume = 1.0;
-    u.pitch = 1.0;
-    
-    // 言語に合うvoiceを探す
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      const langCode = (lang || 'ja-JP').split('-')[0];
-      const matched = voices.find(v => v.lang.startsWith(langCode));
-      if (matched) u.voice = matched;
-    }
-    
-    window.speechSynthesis.speak(u);
-  };
-  
-  // voicesが読み込まれているか確認
-  if (window.speechSynthesis.getVoices().length > 0) {
-    setTimeout(doSpeak, 50);
-  } else {
-    // voices未読み込みの場合はイベント待ち
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.onvoiceschanged = null;
-      setTimeout(doSpeak, 50);
-    };
-    // フォールバック: 1秒後に強制実行
-    setTimeout(doSpeak, 500);
-  }
+  const uttr = new SpeechSynthesisUtterance();
+  uttr.text = text;
+  uttr.lang = langCode || 'ja-JP';
+  uttr.rate = 0.9;
+  uttr.volume = 1.0;
+  window.speechSynthesis.speak(uttr);
 }
 
+// 後方互換
+function speak(text, lang) { playSpeech(text, lang); }
 function speakById(id, which) {
   const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
   if (!p) return;
-  const text = which === 'jp' ? p.jp : T(p);
-  const lang = which === 'jp' ? 'ja-JP' : BCP();
-  speak(text, lang);
+  playSpeech(which === 'jp' ? p.jp : T(p), which === 'jp' ? 'ja-JP' : BCP());
 }
+function speakCached(id, which) { speakById(id, which); }
 
-function speakCached(id, which) {
-  const cache = window._phraseCache && window._phraseCache[id];
-  if (!cache) {
-    // キャッシュがない場合はデータから直接取得
-    const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
-    if (!p) return;
-    speak(which === 'jp' ? p.jp : T(p), which === 'jp' ? 'ja-JP' : BCP());
-    return;
+// カードボタン専用（renderPhrases後に呼ばれる）
+function speakCard(id, which) {
+  const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
+  if (!p) return;
+  if (which === 'jp') {
+    playSpeech(p.jp, 'ja-JP');
+  } else {
+    playSpeech(T(p), BCP());
   }
-  speak(which === 'jp' ? cache.jp : cache.tl, which === 'jp' ? 'ja-JP' : cache.bcp);
 }
-
-function jobMatch(p) {
-  return p.jobs === 'all' || (Array.isArray(p.jobs) && p.jobs.includes(selectedJob));
-}
-
 /* ══ HEADER ══ */
 function renderHeader() {
   const j = JOBS.find(x => x.id === selectedJob);
@@ -789,23 +755,18 @@ function renderHeader() {
   renderLangSwitcher();
 }
 
-/* ══ 言語スイッチャー：直近使用順 ══ */
 function renderLangSwitcher() {
-  // recentLangsの順番で表示（全9言語）
-  const allLangCodes = [...recentLangs, ...Object.keys(ALL_LANGS).filter(c => !recentLangs.includes(c))];
-  document.getElementById('lang-sw').innerHTML = allLangCodes.map(code => {
+  const allCodes = [...recentLangs, ...Object.keys(ALL_LANGS).filter(c => !recentLangs.includes(c))];
+  document.getElementById('lang-sw').innerHTML = allCodes.map(code => {
     const L = ALL_LANGS[code];
     if (!L) return '';
-    return `<button class="lbtn${code===currentLang?' active':''}" onclick="switchLang('${code}')">
-      <span class="lf">${L.flag}</span>${L.name}
-    </button>`;
+    return `<button class="lbtn${code===currentLang?' active':''}" onclick="switchLang('${code}')"><span class="lf">${L.flag}</span>${L.name}</button>`;
   }).join('');
 }
 
 function switchLang(code) {
   currentLang = code;
   localStorage.setItem('genba-current', code);
-  // 直近使用順を更新
   recentLangs = [code, ...recentLangs.filter(c => c !== code)].slice(0, 9);
   localStorage.setItem('genba-recent-langs', JSON.stringify(recentLangs));
   renderLangSwitcher();
@@ -830,17 +791,18 @@ function renderCats() {
 
 function setCat(id) { cat = id; selectedCard = null; renderCats(); renderPhrases(); }
 
-/* ══ PHRASES：直近使用順で上に表示 ══ */
+/* ══ PHRASES ══ */
+function jobMatch(p) {
+  return p.jobs === 'all' || (Array.isArray(p.jobs) && p.jobs.includes(selectedJob));
+}
+
 function renderPhrases() {
   let list = [...PHRASES, ...customPhrases].filter(p =>
     jobMatch(p) && (cat === 'all' || p.cat === cat)
   );
 
-  // 直近使用フレーズを上に並べる
   const recentSet = new Set(recentPhraseIds);
-  const recentList = recentPhraseIds
-    .map(id => list.find(p => p.id === id))
-    .filter(Boolean);
+  const recentList = recentPhraseIds.map(id => list.find(p => p.id === id)).filter(Boolean);
   const otherList = list.filter(p => !recentSet.has(p.id));
   list = [...recentList, ...otherList];
 
@@ -849,38 +811,27 @@ function renderPhrases() {
     return;
   }
 
-  // フレーズデータをキャッシュ（音声再生用）
-  window._phraseCache = {};
-  list.forEach(p => {
-    window._phraseCache[p.id] = { jp: p.jp, tl: T(p), bcp: BCP() };
-  });
-
   document.getElementById('phrase-list').innerHTML = list.map(p => {
     const tlTxt = T(p);
+    const bcpCode = BCP();
     const isRecent = recentSet.has(p.id);
     return `<div class="pcard${selectedCard===p.id?' selected':''}" id="pc-${p.id}" onclick="selCard(${p.id})">
-      ${isRecent ? '<div style="font-size:10px;color:var(--accent);margin-bottom:4px;font-size:10px;">🕐 直近使用</div>' : ''}
+      ${isRecent ? '<div style="font-size:10px;color:var(--accent);margin-bottom:4px;">🕐 直近使用</div>' : ''}
       <div class="pcard-jp">${p.jp}</div>
       <div class="pcard-read">${p.read||''}</div>
       <div class="pcard-divider"></div>
       <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
-        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakCached(${p.id},'jp')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakCached(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakCard(${p.id},'jp')">🔊 日本語</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakCard(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
 }
 
 function selCard(id) {
-  const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
-  if (!p) return;
-
-  // 直近使用リストを更新
   recentPhraseIds = [id, ...recentPhraseIds.filter(x => x !== id)].slice(0, 20);
   localStorage.setItem('genba-recent-phrases', JSON.stringify(recentPhraseIds));
-
-  // ハイライトのみ（音声は各ボタンから個別に再生）
   if (selectedCard === id) {
     selectedCard = null;
     document.getElementById('pc-'+id)?.classList.remove('selected');
@@ -900,14 +851,14 @@ function renderEmerg() {
       <div class="ecard-jp">${e.jp}</div>
       <div class="ecard-tl">${tl}</div>
       <div class="ecard-btns">
-        <button class="ebtn ebtn-jp" onclick="speak('${esc(e.jp)}','ja-JP')">🔊 日本語</button>
-        <button class="ebtn ebtn-tl" onclick="speak('${esc(tl)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="ebtn ebtn-jp" onclick="playSpeech('${e.jp.replace(/'/g,"\'")}','ja-JP')">🔊 日本語</button>
+        <button class="ebtn ebtn-tl" onclick="playSpeech('${tl.replace(/'/g,"\'")}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
 }
 
-/* ══ ADD：シンプル化 - 日本語入力→全言語自動翻訳 ══ */
+/* ══ ADD ══ */
 function renderAddCatRow() {
   const activeCatIds = new Set(getActiveCats().map(c => c.id));
   document.getElementById('add-cat-row').innerHTML = CAT_DEFS
@@ -925,51 +876,30 @@ async function onAddJpInput() {
     allTlResults = {};
     return;
   }
-
-  // 自動翻訳開始
   const status = document.getElementById('tr-status');
   status.className = 'tr-status loading';
   status.textContent = '🌐 全言語に自動翻訳中...';
   document.getElementById('add-save').disabled = true;
   allTlResults = {};
-
   const langMap = {en:'en-US',vi:'vi-VN',id:'id-ID',zh:'zh-CN',tl:'tl-PH',my:'my-MM',th:'th-TH',ne:'ne-NP',km:'km-KH'};
   const langCodes = Object.keys(ALL_LANGS);
-
   try {
-    // 全言語を並列翻訳
     const results = await Promise.allSettled(
       langCodes.map(code =>
         fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(jp)}&langpair=ja|${langMap[code]||code}`)
-          .then(r => r.json())
-          .then(d => ({code, text: d.responseData?.translatedText || ''}))
+          .then(r => r.json()).then(d => ({code, text: d.responseData?.translatedText || ''}))
       )
     );
-
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value.text) {
-        allTlResults[r.value.code] = r.value.text;
-      }
-    });
-
-    // 翻訳結果を表示（修正可能）
+    results.forEach(r => { if (r.status === 'fulfilled' && r.value.text) allTlResults[r.value.code] = r.value.text; });
     const tlDiv = document.getElementById('tl-results');
     tlDiv.innerHTML = langCodes.map(code => {
       const L = ALL_LANGS[code];
-      return `<div class="tl-row">
-        <span class="tl-flag">${L.flag}</span>
-        <input class="tl-inp" id="tl-${code}" type="text" 
-          value="${(allTlResults[code]||'').replace(/"/g,'&quot;')}" 
-          placeholder="${L.name}" 
-          oninput="allTlResults['${code}']=this.value">
-      </div>`;
+      return `<div class="tl-row"><span class="tl-flag">${L.flag}</span><input class="tl-inp" id="tl-${code}" type="text" value="${(allTlResults[code]||'').replace(/"/g,'&quot;')}" placeholder="${L.name}" oninput="allTlResults['${code}']=this.value"></div>`;
     }).join('');
     tlDiv.classList.add('show');
-
     status.className = 'tr-status success';
     status.textContent = '✓ 翻訳完了 — 修正してから追加できます';
     document.getElementById('add-save').disabled = false;
-
   } catch(e) {
     status.className = 'tr-status error';
     status.textContent = '⚠ 翻訳エラー。通信を確認してください。';
@@ -979,55 +909,37 @@ async function onAddJpInput() {
 function savePhrase() {
   const jp = document.getElementById('add-jp').value.trim();
   if (!jp) return;
-
-  // 全言語の翻訳結果を取得（入力欄の値を優先）
   const tObj = {};
   Object.keys(ALL_LANGS).forEach(code => {
     const inp = document.getElementById('tl-'+code);
     tObj[code] = inp ? inp.value.trim() : (allTlResults[code] || '');
   });
-
   const p = {id: nextId++, jobs: 'all', cat: addCat, jp, read: '', t: tObj, custom: true};
   customPhrases.push(p);
   localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
   localStorage.setItem('genba-next-id', String(nextId));
-
-  // リセット
   document.getElementById('add-jp').value = '';
   document.getElementById('tl-results').classList.remove('show');
   document.getElementById('tr-status').className = 'tr-status';
   document.getElementById('add-save').disabled = true;
   allTlResults = {};
-
-  renderCustomList();
-  renderPhrases();
-  renderCats();
+  renderCustomList(); renderPhrases(); renderCats();
   alert('追加しました！');
 }
 
 function deleteCustom(id) {
   customPhrases = customPhrases.filter(p => p.id !== id);
   localStorage.setItem('genba-custom', JSON.stringify(customPhrases));
-  renderCustomList();
-  renderPhrases();
-  renderCats();
+  renderCustomList(); renderPhrases(); renderCats();
 }
 
 function renderCustomList() {
   const w = document.getElementById('custom-list');
   if (!customPhrases.length) { w.innerHTML = ''; return; }
-  w.innerHTML = `<div style="font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">追加済みフレーズ</div>` +
-    customPhrases.map(p => `
-    <div class="custom-item">
-      <div>
-        <div class="ci-text">${p.jp}</div>
-        <div class="ci-tl">${p.t?p.t[currentLang]||p.t.en||'':p.tl||''}</div>
-      </div>
-      <button class="del-btn" onclick="deleteCustom(${p.id})">削除</button>
-    </div>`).join('');
+  w.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">追加済みフレーズ</div>` +
+    customPhrases.map(p => `<div class="custom-item"><div><div class="ci-text">${p.jp}</div><div class="ci-tl">${p.t?p.t[currentLang]||p.t.en||'':p.tl||''}</div></div><button class="del-btn" onclick="deleteCustom(${p.id})">削除</button></div>`).join('');
 }
 
-/* ══ SCREEN ══ */
 function switchScreen(n) {
   ['main','emerg','add'].forEach(s => {
     document.getElementById('sc-'+s).style.display = s===n ? 'flex' : 'none';
@@ -1035,6 +947,7 @@ function switchScreen(n) {
   });
   if (n === 'add') { renderAddCatRow(); renderCustomList(); }
 }
+
 
 /* ══ JOB DROPDOWN ══ */
 let jobDropdownOpen = false;
