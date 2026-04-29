@@ -718,14 +718,28 @@ function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 /* ══ 音声再生（修正済み）══ */
 function speak(text, lang) {
   if (!window.speechSynthesis) return;
+  // iPhoneではcancel後に少し待つ必要がある
   speechSynthesis.cancel();
-  setTimeout(() => {
+  const trySpeak = () => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang || 'ja-JP';
     u.rate = 0.85;
     u.volume = 1;
+    u.pitch = 1;
     speechSynthesis.speak(u);
-  }, 100);
+  };
+  // キャンセル後150ms待ってから再生（iPhone対策）
+  setTimeout(trySpeak, 150);
+}
+
+function speakById(id, which) {
+  const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
+  if (!p) return;
+  if (which === 'jp') {
+    speak(p.jp, 'ja-JP');
+  } else {
+    speak(T(p), BCP());
+  }
 }
 
 function jobMatch(p) {
@@ -810,8 +824,8 @@ function renderPhrases() {
       <div class="pcard-divider"></div>
       <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
-        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speak('${esc(p.jp)}','ja-JP')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speak('${esc(tlTxt)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakById(${p.id},'jp')">🔊 日本語</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakById(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
