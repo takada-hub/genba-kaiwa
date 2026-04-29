@@ -847,8 +847,8 @@ function renderPhrases() {
       <div class="pcard-divider"></div>
       <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
-        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakById(${p.id},'jp')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakById(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speak('${esc(p.jp)}','ja-JP')">🔊 日本語</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speak('${esc(tlTxt)}','${BCP()}')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
