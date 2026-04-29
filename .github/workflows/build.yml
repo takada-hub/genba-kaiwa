@@ -43,24 +43,24 @@ jobs:
         run: |
           mkdir -p twa/app/src/main/res/values
 
-          cat > twa/settings.gradle << 'EOF'
+          cat > twa/settings.gradle << 'GRADLEEOF'
           include ':app'
-          EOF
+          GRADLEEOF
 
-          cat > twa/build.gradle << 'EOF'
+          cat > twa/build.gradle << 'GRADLEEOF'
           buildscript {
               repositories { google(); mavenCentral() }
               dependencies { classpath 'com.android.tools.build:gradle:8.3.0' }
           }
           allprojects { repositories { google(); mavenCentral() } }
-          EOF
+          GRADLEEOF
 
-          cat > twa/gradle.properties << 'EOF'
+          cat > twa/gradle.properties << 'GRADLEEOF'
           android.useAndroidX=true
           android.enableJetifier=true
-          EOF
+          GRADLEEOF
 
-          cat > twa/app/build.gradle << 'EOF'
+          cat > twa/app/build.gradle << 'GRADLEEOF'
           apply plugin: 'com.android.application'
           android {
               namespace 'com.takadahub.genbakaiwa'
@@ -90,18 +90,18 @@ jobs:
           dependencies {
               implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.4.0'
           }
-          EOF
+          GRADLEEOF
 
-          cat > twa/app/src/main/res/values/strings.xml << 'EOF'
+          cat > twa/app/src/main/res/values/strings.xml << 'GRADLEEOF'
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
               <string name="app_name">現場会話</string>
               <string name="default_url">https://takada-hub.github.io/genba-kaiwa/</string>
               <string name="host">takada-hub.github.io</string>
           </resources>
-          EOF
+          GRADLEEOF
 
-          cat > twa/app/src/main/AndroidManifest.xml << 'EOF'
+          cat > twa/app/src/main/AndroidManifest.xml << 'GRADLEEOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-permission android:name="android.permission.INTERNET"/>
@@ -117,17 +117,29 @@ jobs:
                   </activity>
               </application>
           </manifest>
-          EOF
+          GRADLEEOF
 
-      - name: Build AAB
+      - name: Build and Sign AAB
         run: |
           cd twa
           gradle bundleRelease
+          echo "=== AAB files ==="
           find . -name "*.aab" -type f
+          echo "=== Signing AAB ==="
+          jarsigner -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore ../keystore.jks \
+            -storepass android123 \
+            -keypass android123 \
+            app/build/outputs/bundle/release/app-release.aab \
+            android
+          echo "=== Verify signing ==="
+          jarsigner -verify app/build/outputs/bundle/release/app-release.aab
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: genba-kaiwa-aab
-          path: twa/app/build/outputs/bundle/release/
+          path: twa/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: warn
