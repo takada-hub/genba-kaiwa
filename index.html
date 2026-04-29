@@ -145,8 +145,7 @@ body::before {
   box-shadow:0 4px 20px rgba(99,179,237,0.4);
   transition:all 0.2s;letter-spacing:0.3px;
 }
-.snext:disabled{opacity:0.3;cursor:default;box-shadow:none;}
-.snext:not(:disabled):active{transform:scale(0.98);}
+.snext{display:none;}
 
 /* ══ HEADER ══ */
 .header{
@@ -193,13 +192,14 @@ body::before {
 /* プルダウンメニュー */
 #job-dropdown{
   display:none;
-  position:absolute;top:42px;right:0;
-  background:rgba(15,30,60,0.95);
+  position:fixed;
+  background:rgba(15,30,60,0.97);
   backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
   border-radius:14px;
   border:1px solid var(--glass-border);
-  box-shadow:0 8px 32px rgba(0,0,0,0.5);
-  z-index:300;min-width:170px;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  z-index:500;min-width:180px;overflow:hidden;
 }
 .job-dropdown-item{
   display:flex;align-items:center;gap:10px;
@@ -496,14 +496,11 @@ body::before {
   <div class="setup-hero">
     <div class="setup-logo">🏭</div>
     <div class="setup-tagline">現場の声を、<span>もっとスムーズに。</span></div>
-    <div class="setup-sub">Smooth communication for every workplace</div>
+    <div class="setup-sub">Smooth communication for every workplace<br>職種をタップしてはじめる</div>
   </div>
   <div class="setup-body">
     <div class="setup-label">職種を選んでください / Job Category</div>
     <div class="setup-grid" id="setup-body"></div>
-  </div>
-  <div class="setup-footer">
-    <button class="snext" id="snext" onclick="finishSetup()" disabled>はじめる →</button>
   </div>
 </div>
 
@@ -517,11 +514,12 @@ body::before {
         <span id="job-name"></span>
         <span class="job-chip-arrow" id="job-chip-arrow">▼</span>
       </button>
-      <div id="job-dropdown"></div>
     </div>
   </div>
   <div class="lang-sw" id="lang-sw"></div>
 </div>
+<!-- Job dropdown - outside header to avoid clipping -->
+<div id="job-dropdown" style="position:fixed;top:0;right:0;z-index:300;display:none;"></div>
 
 <div class="cats" id="cats"></div>
 
@@ -682,31 +680,29 @@ let allTlResults = {};
 
 /* ══ SETUP ══ */
 function initSetup() {
-  document.getElementById('setup-body').innerHTML = `
-    <div class="setup-grid">
-      ${JOBS.map(j => `
-        <button class="scard${setupJob===j.id?' selected':''}" onclick="selJob('${j.id}',this)">
-          <span class="si">${j.icon}</span>
-          <span class="sn">${j.name}</span>
-          <span class="ss">${j.sub}</span>
-        </button>`).join('')}
-    </div>`;
+  document.getElementById('setup-body').innerHTML =
+    JOBS.map(j => `
+      <button class="scard" onclick="selectJobAndStart('${j.id}')">
+        <span class="si">${j.icon}</span>
+        <span class="sn">${j.name}</span>
+        <span class="ss">${j.sub}</span>
+      </button>`).join('');
 }
 
-function selJob(id, el) {
-  setupJob = id;
+function selectJobAndStart(id) {
+  // ハイライト
   document.querySelectorAll('.scard').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('snext').disabled = false;
+  event.currentTarget.classList.add('selected');
+  // 少し待ってからホームへ
+  setTimeout(() => {
+    selectedJob = id;
+    localStorage.setItem('genba-job', id);
+    document.getElementById('setup').classList.add('hidden');
+    renderAll();
+  }, 200);
 }
 
-function finishSetup() {
-  if (!setupJob) return;
-  selectedJob = setupJob;
-  localStorage.setItem('genba-job', selectedJob);
-  document.getElementById('setup').classList.add('hidden');
-  renderAll();
-}
+function finishSetup() {}
 
 
 
@@ -1009,6 +1005,10 @@ function toggleJobDropdown() {
         </div>
         ${j.id===selectedJob?'<span style="margin-left:auto;color:var(--accent);font-size:14px;">✓</span>':''}
       </button>`).join('');
+    // Position below job-chip button
+    const rect = chip.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 6) + 'px';
+    dd.style.right = (window.innerWidth - rect.right) + 'px';
     dd.style.display = 'block';
     chip.classList.add('open');
   } else {
