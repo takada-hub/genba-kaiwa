@@ -737,14 +737,18 @@ function speakById(id, which) {
 }
 function speakCached(id, which) { speakById(id, which); }
 
-// カードボタン専用（renderPhrases後に呼ばれる）
+// カードボタン専用（修正版）
 function speakCard(id, which) {
   const p = [...PHRASES, ...customPhrases].find(x => x.id === id);
   if (!p) return;
   if (which === 'jp') {
     playSpeech(p.jp, 'ja-JP');
   } else {
-    playSpeech(T(p), BCP());
+    const text = T(p);
+    const langCode = BCP();
+    if (text) {
+      playSpeech(text, langCode);
+    }
   }
 }
 /* ══ HEADER ══ */
@@ -822,8 +826,8 @@ function renderPhrases() {
       <div class="pcard-divider"></div>
       <div class="pcard-tl">${tlTxt}</div>
       <div class="pcard-btns">
-        <button class="pbtn pbtn-jp" onclick="event.stopPropagation();speakCard(${p.id},'jp')">🔊 日本語</button>
-        <button class="pbtn pbtn-tl" onclick="event.stopPropagation();speakCard(${p.id},'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
+        <button class="pbtn pbtn-jp" onclick="event.stopPropagation(); speakCard(${p.id}, 'jp')">🔊 日本語</button>
+        <button class="pbtn pbtn-tl" onclick="event.stopPropagation(); speakCard(${p.id}, 'tl')">🔊 ${ALL_LANGS[currentLang]?.name||''}</button>
       </div>
     </div>`;
   }).join('');
