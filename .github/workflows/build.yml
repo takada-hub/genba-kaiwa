@@ -63,6 +63,7 @@ jobs:
               buildTypes {
                   release {
                       minifyEnabled false
+                      signingConfig null
                   }
               }
           }
